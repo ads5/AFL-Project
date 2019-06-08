@@ -1,0 +1,871 @@
+---
+title: "Introductory Studies"
+output: html_notebook
+---
+
+```{r, echo=FALSE, results=FALSE}
+library(rvest)
+epl_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+for (i in 1:11){
+	epl_data <- rbind(epl_data, c(i+2008, NA, NA, NA, NA))
+}
+names(epl_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2018_2019/clasificacion/'
+webpage <- read_html(url)
+points_data_2019_html <- html_nodes(webpage,'.destacado')
+points_data_2019 <- html_text(points_data_2019_html)
+points_data_2019 <- points_data_2019[c(7:26)]
+points_data_2019
+points_data_2019 <- as.numeric(points_data_2019)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2019){
+		epl_data$Points[i] = mean(points_data_2019)
+		epl_data$SDPoints[i] = sd(points_data_2019)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2017_2018/clasificacion/'
+webpage <- read_html(url)
+points_data_2018_html <- html_nodes(webpage,'.destacado')
+points_data_2018 <- html_text(points_data_2018_html)
+points_data_2018 <- points_data_2018[c(7:26)]
+points_data_2018
+points_data_2018 <- as.numeric(points_data_2018)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2018){
+		epl_data$Points[i] = mean(points_data_2018)
+		epl_data$SDPoints[i] = sd(points_data_2018)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2016_2017/clasificacion/'
+webpage <- read_html(url)
+points_data_2017_html <- html_nodes(webpage,'.destacado')
+points_data_2017 <- html_text(points_data_2017_html)
+points_data_2017 <- points_data_2017[c(7:26)]
+points_data_2017
+points_data_2017 <- as.numeric(points_data_2017)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2017){
+		epl_data$Points[i] = mean(points_data_2017)
+		epl_data$SDPoints[i] = sd(points_data_2017)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2015_2016/clasificacion/'
+webpage <- read_html(url)
+points_data_2016_html <- html_nodes(webpage,'.destacado')
+points_data_2016 <- html_text(points_data_2016_html)
+points_data_2016 <- points_data_2016[c(7:26)]
+points_data_2016
+points_data_2016 <- as.numeric(points_data_2016)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2016){
+		epl_data$Points[i] = mean(points_data_2016)
+		epl_data$SDPoints[i] = sd(points_data_2016)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2014_2015/clasificacion/'
+webpage <- read_html(url)
+points_data_2015_html <- html_nodes(webpage,'.destacado')
+points_data_2015 <- html_text(points_data_2015_html)
+points_data_2015 <- points_data_2015[c(7:26)]
+points_data_2015 <- as.numeric(points_data_2015)
+points_data_2015
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2015){
+		epl_data$Points[i] = mean(points_data_2015)
+		epl_data$SDPoints[i] = sd(points_data_2015)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2013_2014/clasificacion/'
+webpage <- read_html(url)
+points_data_2014_html <- html_nodes(webpage,'.destacado')
+points_data_2014 <- html_text(points_data_2014_html)
+points_data_2014 <- points_data_2014[c(7:26)]
+points_data_2014
+points_data_2014 <- as.numeric(points_data_2014)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2014){
+		epl_data$Points[i] = mean(points_data_2014)
+		epl_data$SDPoints[i] = sd(points_data_2014)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2012_2013/clasificacion/'
+webpage <- read_html(url)
+points_data_2013_html <- html_nodes(webpage,'.destacado')
+points_data_2013 <- html_text(points_data_2013_html)
+points_data_2013 <- points_data_2013[c(7:26)]
+points_data_2013
+points_data_2013 <- as.numeric(points_data_2013)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2013){
+		epl_data$Points[i] = mean(points_data_2013)
+		epl_data$SDPoints[i] = sd(points_data_2013)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2011_2012/clasificacion/'
+webpage <- read_html(url)
+points_data_2012_html <- html_nodes(webpage,'.puntos')
+points_data_2012 <- html_text(points_data_2012_html)
+points_data_2012 <- points_data_2012[c(4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61)]
+points_data_2012
+points_data_2012 <- as.numeric(points_data_2012)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2012){
+		epl_data$Points[i] = mean(points_data_2012)
+		epl_data$SDPoints[i] = sd(points_data_2012)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2010_2011/clasificacion/'
+webpage <- read_html(url)
+points_data_2011_html <- html_nodes(webpage,'.puntos')
+points_data_2011 <- html_text(points_data_2011_html)
+points_data_2011 <- points_data_2011[c(4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61)]
+points_data_2011
+points_data_2011 <- as.numeric(points_data_2011)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2011){
+		epl_data$Points[i] = mean(points_data_2011)
+		epl_data$SDPoints[i] = sd(points_data_2011)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2009_2010/clasificacion/'
+webpage <- read_html(url)
+points_data_2010_html <- html_nodes(webpage,'.puntos')
+points_data_2010 <- html_text(points_data_2010_html)
+points_data_2010 <- points_data_2010[c(4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61)]
+points_data_2010
+points_data_2010 <- as.numeric(points_data_2010)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2010){
+		epl_data$Points[i] = mean(points_data_2010)
+		epl_data$SDPoints[i] = sd(points_data_2010)
+		}
+}
+
+url <- 'https://en.as.com/resultados/futbol/inglaterra/2008_2009/clasificacion/'
+webpage <- read_html(url)
+points_data_2009_html <- html_nodes(webpage,'.puntos')
+points_data_2009 <- html_text(points_data_2009_html)
+points_data_2009 <- points_data_2009[c(4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61)]
+points_data_2009
+points_data_2009 <- as.numeric(points_data_2009)
+n=nrow(epl_data)
+for (i in 1:n){
+	if (epl_data$Season[i] == 2009){
+		epl_data$Points[i] = mean(points_data_2009)
+		epl_data$SDPoints[i] = sd(points_data_2009)
+		}
+}
+
+epl_data$Attendance = c(35592, 34151, 35723, 34601, 35921, 36631, 36176, 36452, 35822, 38297, 38168)
+
+epl_data$Odds = c(2.63608, 2.80529, 2.56139, 2.65445, 2.54953, 2.74447, 2.66084, 2.55992, 2.90208, 3.05245, 3.17029)
+
+epl_data
+
+
+bun_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+for (i in 1:11){
+	bun_data <- rbind(bun_data, c(i+2008, NA, NA, NA, NA))
+}
+names(bun_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2008-09/34/0'
+webpage <- read_html(url)
+points_data_2009_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2009 <- html_text(points_data_2009_html)
+points_data_2009 <- points_data_2009[c(2:19)]
+points_data_2009
+points_data_2009 <- as.numeric(points_data_2009)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2009){
+		bun_data$Points[i] = mean(points_data_2009)
+		bun_data$SDPoints[i] = sd(points_data_2009)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2009-10/34/0'
+webpage <- read_html(url)
+points_data_2010_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2010 <- html_text(points_data_2010_html)
+points_data_2010 <- points_data_2010[c(2:19)]
+points_data_2010
+points_data_2010 <- as.numeric(points_data_2010)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2010){
+		bun_data$Points[i] = mean(points_data_2010)
+		bun_data$SDPoints[i] = sd(points_data_2010)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2010-11/34/0'
+webpage <- read_html(url)
+points_data_2011_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2011 <- html_text(points_data_2011_html)
+points_data_2011 <- points_data_2011[c(2:19)]
+points_data_2011
+points_data_2011 <- as.numeric(points_data_2011)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2011){
+		bun_data$Points[i] = mean(points_data_2011)
+		bun_data$SDPoints[i] = sd(points_data_2011)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2011-12/34/0'
+webpage <- read_html(url)
+points_data_2012_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2012 <- html_text(points_data_2012_html)
+points_data_2012 <- points_data_2012[c(2:19)]
+points_data_2012
+points_data_2012 <- as.numeric(points_data_2012)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2012){
+		bun_data$Points[i] = mean(points_data_2012)
+		bun_data$SDPoints[i] = sd(points_data_2012)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2012-13/34/0'
+webpage <- read_html(url)
+points_data_2013_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2013 <- html_text(points_data_2013_html)
+points_data_2013 <- points_data_2013[c(2:19)]
+points_data_2013
+points_data_2013 <- as.numeric(points_data_2013)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2013){
+		bun_data$Points[i] = mean(points_data_2013)
+		bun_data$SDPoints[i] = sd(points_data_2013)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2013-14/34/0'
+webpage <- read_html(url)
+points_data_2014_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2014 <- html_text(points_data_2014_html)
+points_data_2014 <- points_data_2014[c(2:19)]
+points_data_2014
+points_data_2014 <- as.numeric(points_data_2014)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2014){
+		bun_data$Points[i] = mean(points_data_2014)
+		bun_data$SDPoints[i] = sd(points_data_2014)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2014-15/34/0'
+webpage <- read_html(url)
+points_data_2015_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2015 <- html_text(points_data_2015_html)
+points_data_2015 <- points_data_2015[c(2:19)]
+points_data_2015
+points_data_2015 <- as.numeric(points_data_2015)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2015){
+		bun_data$Points[i] = mean(points_data_2015)
+		bun_data$SDPoints[i] = sd(points_data_2015)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2015-16/34/0'
+webpage <- read_html(url)
+points_data_2016_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2016 <- html_text(points_data_2016_html)
+points_data_2016 <- points_data_2016[c(2:19)]
+points_data_2016
+points_data_2016 <- as.numeric(points_data_2016)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2016){
+		bun_data$Points[i] = mean(points_data_2016)
+		bun_data$SDPoints[i] = sd(points_data_2016)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2016-17/34/0'
+webpage <- read_html(url)
+points_data_2017_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2017 <- html_text(points_data_2017_html)
+points_data_2017 <- points_data_2017[c(2:19)]
+points_data_2017
+points_data_2017 <- as.numeric(points_data_2017)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2017){
+		bun_data$Points[i] = mean(points_data_2017)
+		bun_data$SDPoints[i] = sd(points_data_2017)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2017-18/34/0'
+webpage <- read_html(url)
+points_data_2018_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2018 <- html_text(points_data_2018_html)
+points_data_2018 <- points_data_2018[c(2:19)]
+points_data_2018
+points_data_2018 <- as.numeric(points_data_2018)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2018){
+		bun_data$Points[i] = mean(points_data_2018)
+		bun_data$SDPoints[i] = sd(points_data_2018)
+		}
+}
+
+url <- 'https://www.kicker.de/1-bundesliga/spieltag/2018-19/34/0'
+webpage <- read_html(url)
+points_data_2019_html <- html_nodes(webpage,'.kick__respt-m-o-5')
+points_data_2019 <- html_text(points_data_2019_html)
+points_data_2019 <- points_data_2019[c(2:19)]
+points_data_2019
+points_data_2019 <- as.numeric(points_data_2019)
+n=nrow(bun_data)
+for (i in 1:n){
+	if (bun_data$Season[i] == 2019){
+		bun_data$Points[i] = mean(points_data_2019)
+		bun_data$SDPoints[i] = sd(points_data_2019)
+		}
+}
+
+bun_data$Attendance = c(42521, 42490, 42663, 45116, 42622, 43500, 43539, 43300,41511,44646,43358)
+
+bun_data$Odds = c(2.36817, 2.43696, 2.40529, 2.505, 2.57458, 2.7484, 2.78157, 2.90196, 2.81621, 2.61768, 2.76951)
+
+
+ser_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+for (i in 1:11){
+	ser_data <- rbind(ser_data, c(i+2008, NA, NA, NA, NA))
+}
+names(ser_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2008/league/ita.1'
+webpage <- read_html(url)
+points_data_2009_html <- html_nodes(webpage,'.stat-cell')
+points_data_2009 <- html_text(points_data_2009_html)
+points_data_2009 <- points_data_2009[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2009
+points_data_2009 <- as.numeric(points_data_2009)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2009){
+		ser_data$Points[i] = mean(points_data_2009)
+		ser_data$SDPoints[i] = sd(points_data_2009)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2009/league/ita.1'
+webpage <- read_html(url)
+points_data_2010_html <- html_nodes(webpage,'.stat-cell')
+points_data_2010 <- html_text(points_data_2010_html)
+points_data_2010 <- points_data_2010[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2010
+points_data_2010 <- as.numeric(points_data_2010)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2010){
+		ser_data$Points[i] = mean(points_data_2010)
+		ser_data$SDPoints[i] = sd(points_data_2010)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2010/league/ita.1'
+webpage <- read_html(url)
+points_data_2011_html <- html_nodes(webpage,'.stat-cell')
+points_data_2011 <- html_text(points_data_2011_html)
+points_data_2011 <- points_data_2011[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2011
+points_data_2011 <- as.numeric(points_data_2011)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2011){
+		ser_data$Points[i] = mean(points_data_2011)
+		ser_data$SDPoints[i] = sd(points_data_2011)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2011/league/ita.1'
+webpage <- read_html(url)
+points_data_2012_html <- html_nodes(webpage,'.stat-cell')
+points_data_2012 <- html_text(points_data_2012_html)
+points_data_2012 <- points_data_2012[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2012
+points_data_2012 <- as.numeric(points_data_2012)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2012){
+		ser_data$Points[i] = mean(points_data_2012)
+		ser_data$SDPoints[i] = sd(points_data_2012)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2012/league/ita.1'
+webpage <- read_html(url)
+points_data_2013_html <- html_nodes(webpage,'.stat-cell')
+points_data_2013 <- html_text(points_data_2013_html)
+points_data_2013 <- points_data_2013[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2013
+points_data_2013 <- as.numeric(points_data_2013)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2013){
+		ser_data$Points[i] = mean(points_data_2013)
+		ser_data$SDPoints[i] = sd(points_data_2013)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2013/league/ita.1'
+webpage <- read_html(url)
+points_data_2014_html <- html_nodes(webpage,'.stat-cell')
+points_data_2014 <- html_text(points_data_2014_html)
+points_data_2014 <- points_data_2014[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2014
+points_data_2014 <- as.numeric(points_data_2014)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2014){
+		ser_data$Points[i] = mean(points_data_2014)
+		ser_data$SDPoints[i] = sd(points_data_2014)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2014/league/ita.1'
+webpage <- read_html(url)
+points_data_2015_html <- html_nodes(webpage,'.stat-cell')
+points_data_2015 <- html_text(points_data_2015_html)
+points_data_2015 <- points_data_2015[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2015
+points_data_2015 <- as.numeric(points_data_2015)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2015){
+		ser_data$Points[i] = mean(points_data_2015)
+		ser_data$SDPoints[i] = sd(points_data_2015)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2015/league/ita.1'
+webpage <- read_html(url)
+points_data_2016_html <- html_nodes(webpage,'.stat-cell')
+points_data_2016 <- html_text(points_data_2016_html)
+points_data_2016 <- points_data_2016[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2016
+points_data_2016 <- as.numeric(points_data_2016)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2016){
+		ser_data$Points[i] = mean(points_data_2016)
+		ser_data$SDPoints[i] = sd(points_data_2016)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2016/league/ita.1'
+webpage <- read_html(url)
+points_data_2017_html <- html_nodes(webpage,'.stat-cell')
+points_data_2017 <- html_text(points_data_2017_html)
+points_data_2017 <- points_data_2017[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2017
+points_data_2017 <- as.numeric(points_data_2017)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2017){
+		ser_data$Points[i] = mean(points_data_2017)
+		ser_data$SDPoints[i] = sd(points_data_2017)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2017/league/ita.1'
+webpage <- read_html(url)
+points_data_2018_html <- html_nodes(webpage,'.stat-cell')
+points_data_2018 <- html_text(points_data_2018_html)
+points_data_2018 <- points_data_2018[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2018
+points_data_2018 <- as.numeric(points_data_2018)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2018){
+		ser_data$Points[i] = mean(points_data_2018)
+		ser_data$SDPoints[i] = sd(points_data_2018)
+		}
+}
+
+url <- 'https://www.espn.co.uk/football/table/_/season/2018/league/ita.1'
+webpage <- read_html(url)
+points_data_2019_html <- html_nodes(webpage,'.stat-cell')
+points_data_2019 <- html_text(points_data_2019_html)
+points_data_2019 <- points_data_2019[c(8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160)]
+points_data_2019
+points_data_2019 <- as.numeric(points_data_2019)
+n=nrow(ser_data)
+for (i in 1:n){
+	if (ser_data$Season[i] == 2019){
+		ser_data$Points[i] = mean(points_data_2019)
+		ser_data$SDPoints[i] = sd(points_data_2019)
+		}
+}
+
+ser_data$Attendance = c(25371, 25282, 24136, 22493, 23268, 23385, 22213, 22644, 22164, 24767, 25237)
+
+ser_data$Odds = c(2.38406, 2.40024, 2.41895, 2.46608, 2.48134, 2.54416, 2.58911, 2.64374, 2.86021, 3.01905, 2.89013)
+```
+
+We are looking at data from major European football leagues to highlight the importance of our research question. While one might posit that spectators are drawn to attend games because of the intrigue of an uncertain outcome, we can show that this basic analysis alone is not enough to draw any conclusions from. In order to gain a clearer picture of the factors which draw spectators to attend games, we will need more in-depth research.
+
+The data that we have pulled for the European football leagues covers each season from 2008-09 through 2018-19. We have gathered the average attendance for all league games, the standard deviation of the number of points each team accumulates over the course of the season (3 for win, 1 for draw, 0 for loss), and the odds of the home team winning any given game. Our hypothesis is that attendance will be greater in years where the teams have relatively similar levels of performance (small standard deviation of points) as well as when the odds of the home team winning are closer to 50%.
+
+One potential mitigating factor is that teams are rewarded for finishing in the top four of the league, meaning that fans will still be drawn in even if there is a team or two that dominate the league (and thus increasing the standard deviation). Additionally, we are looking at league-wide data and thus not looking at the incentive structures for individual fanbases. Finally, looking only at the home odds could cause the odds to average out as the best teams will have very high odds while the worst teams will have very low odds (although the odds will be affected more strongly by positive outliers, indicating that years with higher average odds have more dominant teams).
+
+Our methods for the collection and analysis of data are explained below.
+
+The first league we looked at was the English Premier League (EPL). The EPL has 24 teams, and the double round robin format means that each team plays 46 games per season.
+
+The attendance data was pulled manually from worldfootball.net.
+
+The points data was scraped from various sources. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(epl_data$SDPoints ~ epl_data$Attendance)
+plot(epl_data$Attendance, epl_data$SDPoints, xlim = c(33000, 39000), ylim = c(12,22))
+abline(fit)
+text(epl_data$SDPoints~epl_data$Attendance, labels=(epl_data$Season), cex=.8, pos=4)
+cor(epl_data$Attendance, epl_data$SDPoints)
+```
+
+The correlation coefficient of 0.309 indicates that there is a moderate positive correlation between the average attendance and the standard deviation of the points that teams accumulated.
+
+The odds data was inputted manually from football-data.co.uk. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(epl_data$Odds ~ epl_data$Attendance)
+plot(epl_data$Attendance, epl_data$Odds, xlim = c(33000, 39000), ylim = c(2.5, 3.2))
+abline(fit)
+text(epl_data$Odds~epl_data$Attendance, labels=(epl_data$Season), cex=.8, pos=4)
+cor(epl_data$Attendance, epl_data$Odds)
+```
+
+The correlation coefficient of 0.610 indicates that there is a strong positive correlation between the average attendance and the odds of the home team winning. In seasons which had more dominant teams and less parity in the league, attendance was generally higher.
+
+Both of these results run counter to our hypothesis that fans value parity in the league.
+
+The full dataset is included below.
+
+```{r}
+epl_data
+```
+
+The same methods were repeated for the Bundesliga (Germany).
+
+The Bundesliga has 18 teams, meaning that each team plays 34 games per season. This will likely contribute to a lower standard deviation in points than in the EPL, but that is irrelevant as they are not being compared against one another.
+
+The attendance data was pulled manually from worldfootball.net.
+
+The points data was scraped from kicker.de. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(bun_data$SDPoints ~ bun_data$Attendance)
+plot(bun_data$Attendance, bun_data$SDPoints, xlim = c(41000, 46000), ylim = c(12, 18))
+abline(fit)
+text(bun_data$SDPoints~bun_data$Attendance, labels=(bun_data$Season), cex=.8, pos=4)
+cor(bun_data$Attendance, bun_data$SDPoints)
+```
+
+The correlation coefficient of 0.216 indicates that there is a weak positive correlation between the average attendance and the standard deviation of the points that teams accumulated.
+
+The odds data was inputted manually from football-data.co.uk. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(bun_data$Odds ~ bun_data$Attendance)
+plot(bun_data$Attendance, bun_data$Odds, xlim = c(41000, 46000), ylim = c(2.3,3))
+abline(fit)
+text(bun_data$Odds~bun_data$Attendance, labels=(bun_data$Season), cex=.8, pos=4)
+cor(bun_data$Attendance, bun_data$Odds)
+```
+
+The correlation coefficient of 0.017 indicates that there is essentially no correlation between the average attendance and the odds of the home team winning. Contrary to the result from the EPL, we see that for the Bundesliga the attendance is not affected by the odds of the home team winning.
+
+Attendance in the Bundesliga does not appear to be changed by parity in the league across seasons.
+
+The full dataset is included below.
+
+```{r}
+bun_data
+```
+
+The same methods were repeated for Serie A (Italy).
+
+Serie A has 20 teams, meaning that each team plays 38 games per season. This will likely contribute to a lower standard deviation in points than in the EPL, but higher than in the Bundesliga. Again, this discrepancy will not have any effect on our results but may point to slightly less power in this study than in that of the EPL.
+
+The attendance data was pulled manually from worldfootball.net.
+
+The points data was scraped from espn.co.uk. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(ser_data$SDPoints ~ ser_data$Attendance)
+plot(ser_data$Attendance, ser_data$SDPoints, xlim = c(22000, 26000), ylim = c(14,21))
+abline(fit)
+text(ser_data$SDPoints~ser_data$Attendance, labels=(ser_data$Season), cex=.8, pos=4)
+cor(ser_data$Attendance, ser_data$SDPoints)
+```
+
+The correlation coefficient of -0.126 indicates that there is a weak negative correlation between the average attendance and the standard deviation of the points that teams accumulated. This is the opposite of the result that we saw for the EPL and the Bundesliga and suggests that Serie A fans respond more to parity in the league.
+
+The odds data was inputted manually from football-data.co.uk. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(ser_data$Odds ~ ser_data$Attendance)
+plot(ser_data$Attendance, ser_data$Odds, xlim = c(22000, 26000), ylim = c(2.3,3.1))
+abline(fit)
+text(ser_data$Odds~ser_data$Attendance, labels=(ser_data$Season), cex=.8, pos=4)
+cor(ser_data$Attendance, ser_data$Odds)
+```
+
+The correlation coefficient of -0.023 indicates that there is essentially no correlation between the average attendance and the odds of the home team winning. Contrary to the result from the EPL but similar to the Bundesliga, we see that for the Bundesliga the attendance is not affected by the odds of the home team winning.
+
+The full dataset is included below.
+
+```{r}
+ser_data
+```
+
+As we can see from the results across the leagues, we aren't able to learn a lot from these basic studies. While the EPL shows a strong correlation between attendance and home team odds, the Bundesliga and Serie A both show no correlation with the same factors. This suggests that either the fans in the various leagues respond to different incentives or that there are confounding variables which we need to explore. We hope that exploring the more in-depth data in the AFL datasets will help us to better learn about the behavioral patterns of sports spectators.
+
+We ran a similar basic analysis with similar AFL data.
+
+```{r, echo=FALSE, results=FALSE}
+# Create data frame for all the data we will use in the end
+afl_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+
+# Enter the seasons which will be included in the data
+for (i in 1:29){
+	afl_data <- rbind(afl_data, c(2019-i, NA, NA, NA, NA))
+}
+
+# Name the columns of the data frame
+names(afl_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+
+# Scraping attendance information
+# Load website
+url <- 'https://afltables.com/afl/crowds/summary.html'
+webpage <- read_html(url)
+attendance_data_html <- html_nodes(webpage,'td')
+attendance_data_1 <- html_text(attendance_data_html)
+for (i in 1:29){
+	attendance_data <- as.numeric(attendance_data_1[c(25+13*(i))]) # Choosing cells we want (and converting to numbers)
+	# Enter data into master dataset
+	if (afl_data$Season[i] == 2019-i){
+		afl_data$Attendance[i] = attendance_data
+	}
+}
+
+# Create dataframes to store the points information for each year (copied over during for loops)
+# Creating many dataframes of different sizes so years with smaller league don't include data from other years
+data0 <- data.frame(a = numeric())
+for (i in 1:14){
+	data0 <- rbind(data0, c(NA))
+}
+names(data0) <- c("a")
+
+data1 <- data.frame(a = numeric())
+for (i in 1:15){
+	data1 <- rbind(data1, c(NA))
+}
+names(data1) <- c("a")
+
+data2 <- data.frame(a = numeric())
+for (i in 1:16){
+	data2 <- rbind(data2, c(NA))
+}
+names(data2) <- c("a")
+
+data3 <- data.frame(a = numeric())
+for (i in 1:17){
+	data3 <- rbind(data3, c(NA))
+}
+names(data3) <- c("a")
+
+# Created multiple of size 18 because of discrepancies in the website I scraped (easier to check individual years this way)
+data4 <- data.frame(a = numeric())
+for (i in 1:18){
+	data4 <- rbind(data4, c(NA))
+}
+names(data4) <- c("a")
+
+data5 <- data.frame(a = numeric())
+for (i in 1:18){
+	data5 <- rbind(data5, c(NA))
+}
+data5
+names(data5) <- c("a")
+
+data6 <- data.frame(a = numeric())
+for (i in 1:18){
+	data6 <- rbind(data6, c(NA))
+}
+names(data6) <- c("a")
+
+# Running a for loop to scrape the data automatically
+for (i in 1:29){
+	# Loading website
+	url <- paste0('https://en.wikipedia.org/wiki/Template:AFL_Ladder/', 2019-i) # URL automatically runs through every year since 1990
+	webpage <- read_html(url)
+	points_data_html <- html_nodes(webpage,'td')
+	points_data <- html_text(points_data_html)
+	# The "if" statements are where the dataframes created earlier will come into play
+	# Each "if" statement saves the mean and standard deviation of points accumulated by teams that year
+	# This one is for 1990, the only year with 14 teams
+	if (2019-i == 1990){
+		for (j in 1:14){
+			data0$a[j] <- as.numeric(points_data[c(4+(10*j))])
+			if (afl_data$Season[i] == 2019-i){
+				afl_data$Points[i] = mean(data0$a)
+				afl_data$SDPoints[i] = sd(data0$a)
+			}
+		}
+	}
+	# This one is for 1991-1994, with 15 teams
+	if (2019-i > 1990 && 2019-i < 1995){
+		for (j in 1:15){
+			data1$a[j] <- as.numeric(points_data[c(4+(10*j))])
+			if (afl_data$Season[i] == 2019-i){
+				afl_data$Points[i] = mean(data1$a)
+				afl_data$SDPoints[i] = sd(data1$a)
+			}
+		}
+	}
+	# This one is for 1995-2010, with 16 teams
+	if (2019-i > 1994 && 2019-i < 2011){
+		for (j in 1:16){
+			data2$a[j] <- as.numeric(points_data[c(4+(10*j))])
+			if (afl_data$Season[i] == 2019-i){
+				afl_data$Points[i] = mean(data2$a)
+				afl_data$SDPoints[i] = sd(data2$a)
+			}
+		}
+	}
+	# This one is for 2011, with 17 teams
+	if (2019-i == 2011){
+		for (j in 1:17){
+			data3$a[j] <- as.numeric(points_data[c(4+10*j)])
+			if (afl_data$Season[i] == 2019-i){
+				afl_data$Points[i] = mean(data3$a)
+				afl_data$SDPoints[i] = sd(data3$a)
+			}
+		}	
+	}
+	# This one is for 2012 & 2014, with 18 teams
+	if (2019-i == 2012 || 2019-i == 2014){
+		for (j in 1:18){
+			data4$a[j] <- as.numeric(points_data[c(4+10*j)])
+			if (afl_data$Season[i] == 2019-i){
+				afl_data$Points[i] = mean(data4$a)
+				afl_data$SDPoints[i] = sd(data4$a)
+			}
+		}	
+	}
+	# This one is for 2013, 18 teams but an issue with formatting for the ninth data point (footnote on website)
+	if (2019-i == 2013){
+		for (j in 1:18){
+			data4$a[j] <- as.numeric(points_data[c(4+10*j)])
+			data4$a[9] <- 56
+			if (afl_data$Season[i] == 2019-i){
+				afl_data$Points[i] = mean(data4$a)
+				afl_data$SDPoints[i] = sd(data4$a)
+			}
+		}
+	}
+	# This one is for 2015, 18 teams but also has issues with the seventh and tenth data points
+	if (2019-i == 2015){
+		for (j in 1:18){
+			data6$a[j] <- as.numeric(points_data[c(4+10*j)])
+			data6$a[7] <- 54
+			data6$a[10] <- 48
+			if (afl_data$Season[i] == 2019-i){
+				afl_data$Points[i] = mean(data6$a)
+				afl_data$SDPoints[i] = sd(data6$a)
+			}
+		}	
+	}
+	# This one is for 2016-2018, website changed format after 2015
+	if (2019-i > 2015 && 2019-i < 2019){
+		for (j in 1:2){
+			data5$a[j] <- as.numeric(points_data[c(-1+10*j)])
+		}
+		for (j in 3:9){
+			data5$a[j] <- as.numeric(points_data[c(1+9*j)])
+		}
+		for (j in 10:18){
+			data5$a[j] <- as.numeric(points_data[c(2+9*j)])
+		}
+		if (afl_data$Season[i] == 2019-i){
+			afl_data$Points[i] = mean(data5$a)
+			afl_data$SDPoints[i] = sd(data5$a)
+		}	
+	}
+}
+
+# The odds were pulled manually from the spreadsheet (mean of home odds by year)
+# The first number is for 2018 and proceeds until 2009
+# 2009 only has data from June-September, so less data points; considered removing but it is consistent with trends
+afl_data$Odds = c(2.19053, 2.01072, 2.55420, 2.36029, 2.40043, 2.92676, 2.99179, 2.48219, 2.05516, 2.16957, rep(NA, 19))
+```
+
+
+The AFL has 18 teams, however the format of the league is different than that of the European football leagues and each team plays 22 games per season. The data encompasses the seasons between 2009 and 2018.
+
+The attendance data was scraped from afltables.com.
+
+The points data was scraped from wikipedia.org. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(afl_data$SDPoints[1:10]~afl_data$Attendance[1:10])
+plot(afl_data$Attendance[1:10], afl_data$SDPoints[1:10], xlim = c(31000, 40000), ylim = c(13,23))
+abline(fit)
+text(afl_data$SDPoints[1:10]~afl_data$Attendance[1:10], labels=(afl_data$Season[1:10]),data=afl_data, cex=.8, pos=1)
+cor(afl_data$Attendance[1:10], afl_data$SDPoints[1:10])
+```
+
+The correlation coefficient of -0.325 indicates that there is a moderate negative correlation between the average attendance and the standard deviation of the points that teams accumulated. This points to AFL fans valuing parity more than in the European football leagues.
+
+The odds data was inputted manually from a spreadsheet database. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
+
+```{r, eval=TRUE}
+fit <- lm(afl_data$Odds[1:10]~afl_data$Attendance[1:10])
+plot(afl_data$Attendance[1:10], afl_data$Odds[1:10], xlim = c(31000, 40000), ylim = c(1.8,3.2))
+abline(fit)
+text(afl_data$Odds[1:10]~afl_data$Attendance[1:10], labels=(afl_data$Season[1:10]),data=afl_data, cex=.8, pos=4)
+cor(afl_data$Attendance[1:10], afl_data$Odds[1:10])
+```
+
+The correlation coefficient of -0.709 indicates that there is a strong negative correlation between the average attendance and the odds of the home team winning. Exactly the opposite of the EPL, the AFL gets better attendance when the home team has lower odds of winning. This also points to AFL fans' tendency to value parity.
+
+The full dataset is included below.
+
+```{r}
+afl_data
+```
