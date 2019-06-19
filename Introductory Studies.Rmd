@@ -1,16 +1,18 @@
 ---
 title: "Introductory Studies"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r, echo=FALSE, results=FALSE}
 library(rvest)
 
-epl_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+epl_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric())
 for (i in 1:11){
-	epl_data <- rbind(epl_data, c(i+2008, NA, NA, NA, NA))
+	epl_data <- rbind(epl_data, c(i+2008, NA, NA, NA))
 }
-names(epl_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+names(epl_data) <- c("Season", "Attendance", "Points", "SDPoints")
 
 for (i in 1:4){
 	# Loading website
@@ -35,13 +37,24 @@ for (i in 5:11){
 
 epl_data$Attendance = c(35592, 34151, 35723, 34601, 35921, 36631, 36176, 36452, 35822, 38297, 38168)
 
-epl_data$Odds = c(2.63608, 2.80529, 2.56139, 2.65445, 2.54953, 2.74447, 2.66084, 2.55992, 2.90208, 3.05245, 3.17029)
+epl_odds <- read.csv("epl_odds.csv")
 
-bun_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+epl_odds_by_year <- split(epl_odds, rep(1:11, each=380))
+
 for (i in 1:11){
-	bun_data <- rbind(bun_data, c(i+2008, NA, NA, NA, NA))
+  epl_data$OddsHome[(i)] <- mean(epl_odds_by_year[[(12-i)]]$Home)
+  epl_data$OddsFavorite[(i)] <- mean(epl_odds_by_year[[(12-i)]]$Favorite)
+  epl_data$OddsUnderdog[(i)] <- mean(epl_odds_by_year[[(12-i)]]$Underdog)
+  epl_data$Differential[(i)] = epl_data$OddsUnderdog[i] - epl_data$OddsFavorite[i]
 }
-names(bun_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+
+
+
+bun_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric())
+for (i in 1:11){
+	bun_data <- rbind(bun_data, c(i+2008, NA, NA, NA))
+}
+names(bun_data) <- c("Season", "Attendance", "Points", "SDPoints")
 
 for (i in 1:1){
 	url <- paste0('https://www.kicker.de/1-bundesliga/spieltag/', 2007+i, '-0', 8+i,'/34/0')
@@ -68,13 +81,24 @@ for (i in 2:11){
 
 bun_data$Attendance = c(42521, 42490, 42663, 45116, 42622, 43500, 43539, 43300,41511,44646,43358)
 
-bun_data$Odds = c(2.36817, 2.43696, 2.40529, 2.505, 2.57458, 2.7484, 2.78157, 2.90196, 2.81621, 2.61768, 2.76951)
+bun_odds <- read.csv("bun_odds.csv")
 
-ser_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+bun_odds_by_year <- split(bun_odds, rep(1:11, each=306))
+
 for (i in 1:11){
-	ser_data <- rbind(ser_data, c(i+2008, NA, NA, NA, NA))
+  bun_data$OddsHome[(i)] <- mean(bun_odds_by_year[[(12-i)]]$Home)
+  bun_data$OddsFavorite[(i)] <- mean(bun_odds_by_year[[(12-i)]]$Favorite)
+  bun_data$OddsUnderdog[(i)] <- mean(bun_odds_by_year[[(12-i)]]$Underdog)
+  bun_data$Differential[(i)] <- bun_data$OddsUnderdog[i] - bun_data$OddsFavorite[i]
 }
-names(ser_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+
+
+
+ser_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric())
+for (i in 1:11){
+	ser_data <- rbind(ser_data, c(i+2008, NA, NA, NA))
+}
+names(ser_data) <- c("Season", "Attendance", "Points", "SDPoints")
 
 for(i in 1:11){
 	url <- paste0('https://www.espn.co.uk/football/table/_/season/', 2007+i, '/league/ita.1')
@@ -88,7 +112,16 @@ for(i in 1:11){
 
 ser_data$Attendance = c(25371, 25282, 24136, 22493, 23268, 23385, 22213, 22644, 22164, 24767, 25237)
 
-ser_data$Odds = c(2.38406, 2.40024, 2.41895, 2.46608, 2.48134, 2.54416, 2.58911, 2.64374, 2.86021, 3.01905, 2.89013)
+ser_odds <- read.csv("ser_odds.csv")
+
+ser_odds_by_year <- split(ser_odds, rep(1:11, each=380))
+
+for (i in 1:11){
+  ser_data$OddsHome[(i)] <- mean(ser_odds_by_year[[(12-i)]]$BbAvH)
+  ser_data$OddsFavorite[(i)] <- mean(ser_odds_by_year[[(12-i)]]$Favorite)
+  ser_data$OddsUnderdog[(i)] <- mean(ser_odds_by_year[[(12-i)]]$Underdog)
+  ser_data$Differential[(i)] <- ser_data$OddsUnderdog[i] - ser_data$OddsFavorite[i]
+}
 
 epl_data
 bun_data
@@ -97,41 +130,77 @@ ser_data
 
 We are looking at data from major European football leagues to highlight the importance of our research question. While one might posit that spectators are drawn to attend games because of the intrigue of an uncertain outcome, we can show that this basic analysis alone is not enough to draw any conclusions from. In order to gain a clearer picture of the factors which draw spectators to attend games, we will need more in-depth research.
 
-The data that we have pulled for the European football leagues covers each season from 2008-09 through 2018-19. We have gathered the average attendance for all league games, the standard deviation of the number of points each team accumulates over the course of the season (3 for win, 1 for draw, 0 for loss), and the odds of the home team winning any given game. Our hypothesis is that attendance will be greater in years where the teams have relatively similar levels of performance (small standard deviation of points) as well as when the odds of the home team winning are closer to 50%.
+The data that we have pulled for the European football leagues covers each season from 2008-09 through 2018-19. We have gathered the average attendance for all league games, the average number of points per team for each season (3 for win, 1 for draw, 0 for loss), the standard deviation of points accumulated by teams over the course of the season, the betting odds for the home team winning any given game, the betting odds for the favored team to win the game, the betting odds for the "underdog" team to win the game, and the difference between the odds for the favorite and those for the underdog. Our hypothesis is that attendance will be greater in years with greater uncertainty of outcome (small SD of points, higher number for OddsFavorite, lower number for OddsUnderdog, and lower number for difference in odds). Additionally, we hypothesize that fans will prefer home odds of greater 50% but less than 75% (uncertain outcome but favoring the home team).
 
-One potential mitigating factor is that teams are rewarded for finishing in the top four of the league, meaning that fans will still be drawn in even if there is a team or two that dominate the league (and thus increasing the standard deviation). Additionally, we are looking at league-wide data and thus not looking at the incentive structures for individual fanbases. Finally, looking only at the home odds could cause the odds to average out as the best teams will have very high odds while the worst teams will have very low odds (although the odds will be affected more strongly by positive outliers, indicating that years with higher average odds have more dominant teams).
+One potential mitigating factor is that teams are rewarded for finishing in the top four of the league, meaning that fans will still be drawn in even if there is a team or two that dominate the league (and thus increasing the standard deviation). Additionally, we are looking at league-wide data and thus not looking at the incentive structures for individual fanbases.
 
 Our methods for the collection and analysis of data are explained below.
 
-The first league we looked at was the English Premier League (EPL). The EPL has 24 teams, and the double round robin format means that each team plays 46 games per season.
+The first league we looked at was the English Premier League (EPL). The EPL has 20 teams, and the double round robin format means that each team plays 38 games per season.
 
 The attendance data was pulled manually from worldfootball.net.
 
 The points data was scraped from various sources. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(epl_data$SDPoints ~ epl_data$Attendance)
-plot(epl_data$Attendance, epl_data$SDPoints, xlim = c(33000, 39000), ylim = c(12,22))
+fit <- lm(epl_data$Attendance ~ epl_data$SDPoints)
+plot(epl_data$SDPoints, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(12,22))
 abline(fit)
-text(epl_data$SDPoints~epl_data$Attendance, labels=(epl_data$Season), cex=.8, pos=4)
+text(epl_data$Attendance~epl_data$SDPoints, labels=(epl_data$Season), cex=.8, pos=4)
 cor(epl_data$Attendance, epl_data$SDPoints)
 ```
 
-The correlation coefficient of 0.309 indicates that there is a moderate positive correlation between the average attendance and the standard deviation of the points that teams accumulated.
+The correlation coefficient of 0.309 indicates that there is a moderate positive correlation between the average attendance and the standard deviation of the points that teams accumulated. This runs contrary to our hypothesis.
 
-The odds data was inputted manually from football-data.co.uk. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
+The odds data was scraped from football-data.co.uk. The mean of the home odds, favorite odds, and underdog odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(epl_data$Odds ~ epl_data$Attendance)
-plot(epl_data$Attendance, epl_data$Odds, xlim = c(33000, 39000), ylim = c(2.5, 3.2))
+fit <- lm(epl_data$Attendance ~ epl_data$OddsHome)
+plot(epl_data$OddsHome, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(2.5, 3.2))
 abline(fit)
-text(epl_data$Odds~epl_data$Attendance, labels=(epl_data$Season), cex=.8, pos=4)
-cor(epl_data$Attendance, epl_data$Odds)
+text(epl_data$Attendance~epl_data$OddsHome, labels=(epl_data$Season), cex=.8, pos=4)
+cor(epl_data$Attendance, epl_data$OddsHome)
 ```
 
-The correlation coefficient of 0.610 indicates that there is a strong positive correlation between the average attendance and the odds of the home team winning. In seasons which had more dominant teams and less parity in the league, attendance was generally higher.
+The correlation coefficient of 0.610 indicates that there is a strong positive correlation between the average attendance and the odds of the home team winning. In seasons which had more dominant teams and less parity in the league, attendance was generally higher. This also is not in line with our hypothesis.
 
-Both of these results run counter to our hypothesis that fans value parity in the league.
+Next is the plot of favorite odds against attendance. Our hypothesis would expect higher odds to correlate with higher attendance but the data from the prior analyses would indicate the opposite should happen.
+
+```{r, eval=TRUE}
+fit <- lm(epl_data$Attendance ~ epl_data$OddsFavorite)
+plot(epl_data$OddsFavorite, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(1.4, 2.4))
+abline(fit)
+text(epl_data$Attendance~epl_data$OddsFavorite, labels=(epl_data$Season), cex=.8, pos=4)
+cor(epl_data$Attendance, epl_data$OddsFavorite)
+```
+
+The correlation coefficient of 0.059 shows that there is an essentially negligible positive correlation between the favorite being less likely to win and attendance.
+
+Here we have the plot of underdog odds against attendance. Our hypothesis predicts that at lower values of underdog odds, there will be greater attendance numbers. However the prior analyses suggest the opposite relationship.
+
+```{r, eval=TRUE}
+fit <- lm(epl_data$Attendance ~ epl_data$OddsUnderdog)
+plot(epl_data$OddsUnderdog, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(4.5, 6.0))
+abline(fit)
+text(epl_data$Attendance~epl_data$OddsUnderdog, labels=(epl_data$Season), cex=.8, pos=4)
+cor(epl_data$Attendance, epl_data$OddsUnderdog)
+```
+
+The correlation coefficient is 0.401, supporting our earlier analyses and providing more evidence against our hypothesis.
+
+Our last plot for the EPL data uses the differential in favorite and underdog odds against attendance.
+
+```{r, eval=TRUE}
+fit <- lm(epl_data$Attendance ~ epl_data$Differential)
+plot(epl_data$Differential, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(2.5, 5))
+abline(fit)
+text(epl_data$Attendance~epl_data$Differential, labels=(epl_data$Season), cex=.8, pos=4)
+cor(epl_data$Attendance, epl_data$Differential)
+```
+
+The correlation coefficient of 0.377 suggests that there is a moderate positive relationship between the difference in favorite vs. underdog odds, therefore showing that with less uncertainty of outcome the attendance is higher. The random scatter of the points suggests that there is not likely a temporal relationship between the variables.
+
+Ultimately what we find is that attendance numbers are greater in years with greater disparity between the skill levels of the teams. This is a surprising result that indicates that fans don't value uncertainty of outcome in the EPL, and may prefer to see higher levels of skill amongst the best teams in the league.
 
 The full dataset is included below.
 
@@ -148,28 +217,64 @@ The attendance data was pulled manually from worldfootball.net.
 The points data was scraped from kicker.de. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(bun_data$SDPoints ~ bun_data$Attendance)
-plot(bun_data$Attendance, bun_data$SDPoints, xlim = c(41000, 46000), ylim = c(12, 18))
+fit <- lm(bun_data$Attendance ~ bun_data$SDPoints)
+plot(bun_data$SDPoints, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(12, 18))
 abline(fit)
-text(bun_data$SDPoints~bun_data$Attendance, labels=(bun_data$Season), cex=.8, pos=4)
+text(bun_data$Attendance~bun_data$SDPoints, labels=(bun_data$Season), cex=.8, pos=4)
 cor(bun_data$Attendance, bun_data$SDPoints)
 ```
 
-The correlation coefficient of 0.216 indicates that there is a weak positive correlation between the average attendance and the standard deviation of the points that teams accumulated.
+The correlation coefficient of 0.216 indicates that there is a weak positive correlation between the average attendance and the standard deviation of the points that teams accumulated. This information is in line with the EPL data and runs contrary to our hypothesis of uncertainty of outcome drawing fans to attend.
 
-The odds data was inputted manually from football-data.co.uk. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
+The odds data was scraped from football-data.co.uk. The mean of the home odds, favorite odds, and underdog odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(bun_data$Odds ~ bun_data$Attendance)
-plot(bun_data$Attendance, bun_data$Odds, xlim = c(41000, 46000), ylim = c(2.3,3))
+fit <- lm(bun_data$Attendance ~ bun_data$OddsHome)
+plot(bun_data$OddsHome, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(2.3, 3.0))
 abline(fit)
-text(bun_data$Odds~bun_data$Attendance, labels=(bun_data$Season), cex=.8, pos=4)
-cor(bun_data$Attendance, bun_data$Odds)
+text(bun_data$Attendance~bun_data$OddsHome, labels=(bun_data$Season), cex=.8, pos=4)
+cor(bun_data$Attendance, bun_data$OddsHome)
 ```
 
 The correlation coefficient of 0.017 indicates that there is essentially no correlation between the average attendance and the odds of the home team winning. Contrary to the result from the EPL, we see that for the Bundesliga the attendance is not affected by the odds of the home team winning.
 
-Attendance in the Bundesliga does not appear to be changed by parity in the league across seasons.
+Next is the plot of favorite odds against attendance. Our hypothesis would expect higher odds to correlate with higher attendance.
+
+```{r, eval=TRUE}
+fit <- lm(bun_data$Attendance ~ bun_data$OddsFavorite)
+plot(bun_data$OddsFavorite, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(1.4, 2.4))
+abline(fit)
+text(bun_data$Attendance~bun_data$OddsFavorite, labels=(bun_data$Season), cex=.8, pos=4)
+cor(bun_data$Attendance, bun_data$OddsFavorite)
+```
+
+The correlation coefficient of 0.208 shows that there is a weak positive correlation between the favorite being less likely to win and attendance. This supports our hypothesis of uncertainty of outcome influencing spectators to attend, and shows a relationship opposite of what we found with  "SDPoints" against attendance. This is the first result that we have found which supports our hypothesis.
+
+Here we have the plot of underdog odds against attendance. Our hypothesis predicts that at lower values of underdog odds, there will be greater attendance numbers.
+
+```{r, eval=TRUE}
+fit <- lm(bun_data$Attendance ~ bun_data$OddsUnderdog)
+plot(bun_data$OddsUnderdog, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(4.5, 6.0))
+abline(fit)
+text(bun_data$Attendance~bun_data$OddsUnderdog, labels=(bun_data$Season), cex=.8, pos=4)
+cor(bun_data$Attendance, bun_data$OddsUnderdog)
+```
+
+The correlation coefficient is -0.038, which is an essentially negligible negative relationship between the decrease in odds of the underdog and the attendance. The direction of this relationship supports our hypothesis but is very minor in degree.
+
+Our last plot for the Bundesliga data uses the differential in favorite and underdog odds against attendance.
+
+```{r, eval=TRUE}
+fit <- lm(bun_data$Attendance ~ bun_data$Differential)
+plot(bun_data$Differential, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(2, 4))
+abline(fit)
+text(bun_data$Attendance~bun_data$Differential, labels=(bun_data$Season), cex=.8, pos=4)
+cor(bun_data$Attendance, bun_data$Differential)
+```
+
+The correlation coefficient of -0.051 suggests that there is a very weak negative relationship between the difference in favorite vs. underdog odds, showing that there is an almost negligible negative relationship between uncertainty of outcome and attendance. The random scatter of the points suggests that there is not likely a temporal relationship between the variables.
+
+Ultimately we find contradictory results across the studies as to whether or not fans respond positively to uncertainty of outcome. While we can't form any definitive conclusions, it appears that attendance in the Bundesliga is not changed by parity in the league across seasons, at least not to the extent that it is in the EPL.
 
 The full dataset is included below.
 
@@ -179,33 +284,71 @@ bun_data
 
 The same methods were repeated for Serie A (Italy).
 
-Serie A has 20 teams, meaning that each team plays 38 games per season. This will likely contribute to a lower standard deviation in points than in the EPL, but higher than in the Bundesliga. Again, this discrepancy will not have any effect on our results but may point to slightly less power in this study than in that of the EPL.
+Serie A has 20 teams, meaning that each team plays 38 games per season. This will likely contribute to a similar standard deviation in points to the EPL, but higher than in the Bundesliga. Again, this discrepancy will not have any effect on our results but may point to slightly less power in this study than in that of the EPL.
 
 The attendance data was pulled manually from worldfootball.net.
 
 The points data was scraped from espn.co.uk. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(ser_data$SDPoints ~ ser_data$Attendance)
-plot(ser_data$Attendance, ser_data$SDPoints, xlim = c(22000, 26000), ylim = c(14,21))
+fit <- lm(ser_data$Attendance ~ ser_data$SDPoints)
+plot(ser_data$SDPoints, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(14,21))
 abline(fit)
-text(ser_data$SDPoints~ser_data$Attendance, labels=(ser_data$Season), cex=.8, pos=4)
+text(ser_data$Attendance~ser_data$SDPoints, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$SDPoints)
 ```
 
-The correlation coefficient of -0.126 indicates that there is a weak negative correlation between the average attendance and the standard deviation of the points that teams accumulated. This is the opposite of the result that we saw for the EPL and the Bundesliga and suggests that Serie A fans respond more to parity in the league.
+The correlation coefficient of -0.126 indicates that there is a weak negative correlation between the average attendance and the standard deviation of the points that teams accumulated. This is the opposite of the result that we saw for the EPL and the Bundesliga and suggests that Serie A fans respond more to parity in the league, supporting our hypothesis.
 
-The odds data was inputted manually from football-data.co.uk. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
+The odds data was scraped from football-data.co.uk. The mean of the home odds, favorite odds, and underdog odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(ser_data$Odds ~ ser_data$Attendance)
-plot(ser_data$Attendance, ser_data$Odds, xlim = c(22000, 26000), ylim = c(2.3,3.1))
+fit <- lm(ser_data$Attendance ~ ser_data$OddsHome)
+plot(ser_data$OddsHome, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.5, 3.2))
 abline(fit)
-text(ser_data$Odds~ser_data$Attendance, labels=(ser_data$Season), cex=.8, pos=4)
-cor(ser_data$Attendance, ser_data$Odds)
+text(ser_data$Attendance~ser_data$OddsHome, labels=(ser_data$Season), cex=.8, pos=4)
+cor(ser_data$Attendance, ser_data$OddsHome)
 ```
 
 The correlation coefficient of -0.023 indicates that there is essentially no correlation between the average attendance and the odds of the home team winning. Contrary to the result from the EPL but similar to the Bundesliga, we see that for the Bundesliga the attendance is not affected by the odds of the home team winning.
+
+Next is the plot of favorite odds against attendance. Our hypothesis would expect higher odds to correlate with higher attendance but the data from the prior analyses would indicate the opposite should happen.
+
+```{r, eval=TRUE}
+fit <- lm(ser_data$Attendance ~ ser_data$OddsFavorite)
+plot(ser_data$OddsFavorite, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(1.4, 2.4))
+abline(fit)
+text(ser_data$Attendance~ser_data$OddsFavorite, labels=(ser_data$Season), cex=.8, pos=4)
+cor(ser_data$Attendance, ser_data$OddsFavorite)
+```
+
+The correlation coefficient of -0.066 shows that there is an essentially negligible negative correlation between the favorite being less likely to win and attendance, although the negative direction of the relationship is in line with our hypothesis.
+
+Here we have the plot of underdog odds against attendance. Our hypothesis predicts that at lower values of underdog odds, there will be greater attendance numbers. However the prior analyses suggest the opposite relationship.
+
+```{r, eval=TRUE}
+fit <- lm(ser_data$Attendance ~ ser_data$OddsUnderdog)
+plot(ser_data$OddsUnderdog, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(4.5, 6.0))
+abline(fit)
+text(ser_data$Attendance~ser_data$OddsUnderdog, labels=(ser_data$Season), cex=.8, pos=4)
+cor(ser_data$Attendance, ser_data$OddsUnderdog)
+```
+
+The correlation coefficient is 0.074, which is also basically negligible, although the direction of the relationship provides some support of our earlier analyses and more evidence towards our hypothesis although to a very weak degree.
+
+Our last plot for the Serie A data uses the differential in favorite and underdog odds against attendance.
+
+```{r, eval=TRUE}
+fit <- lm(ser_data$Attendance ~ ser_data$Differential)
+plot(ser_data$Differential, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.75, 4.75))
+abline(fit)
+text(ser_data$Attendance~ser_data$Differential, labels=(ser_data$Season), cex=.8, pos=4)
+cor(ser_data$Attendance, ser_data$Differential)
+```
+
+The correlation coefficient of 0.073 suggests that there is a minor positive relationship between the difference in favorite vs. underdog odds, therefore showing that with less uncertainty of outcome the attendance is higher. There may be some sort of temporal relationship between the variables given that the past three seasons have seen by far the largest differentials in odds level.
+
+Ultimately what we find is that the relationship between attendance numbers and the disparity between the skill levels of the teams changes when we use different factors.
 
 The full dataset is included below.
 
@@ -213,21 +356,21 @@ The full dataset is included below.
 ser_data
 ```
 
-As we can see from the results across the leagues, we aren't able to learn a lot from these basic studies. While the EPL shows a strong correlation between attendance and home team odds, the Bundesliga and Serie A both show no correlation with the same factors. This suggests that either the fans in the various leagues respond to different incentives or that there are confounding variables which we need to explore. We hope that exploring the more in-depth data in the AFL datasets will help us to better learn about the behavioral patterns of sports spectators.
+As we can see from the results across the leagues, we aren't able to learn a lot from these basic studies. While the EPL shows a relatively strong relationship between attendance and less uncertainty of outcome, the Bundesliga and Serie A results are inconclusive. This suggests that either the fans in the various leagues respond to different incentives or that there are confounding variables which we need to explore. We hope that exploring the more in-depth data in the AFL datasets will help us to better learn about the behavioral patterns of sports spectators.
 
-We ran a similar basic analysis with similar AFL data.
+We ran a similar basic analysis with AFL data.
 
 ```{r, echo=FALSE, results=FALSE}
 # Create data frame for all the data we will use in the end
-afl_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric(), Odds = character())
+afl_data <- data.frame(Season = character(), Attendance = numeric(), Points = numeric(), SDPoints = numeric())
 
 # Enter the seasons which will be included in the data
-for (i in 1:29){
-	afl_data <- rbind(afl_data, c(2019-i, NA, NA, NA, NA))
+for (i in 1:10){
+	afl_data <- rbind(afl_data, c(2019-i, NA, NA, NA))
 }
 
 # Name the columns of the data frame
-names(afl_data) <- c("Season", "Attendance", "Points", "SDPoints", "Odds")
+names(afl_data) <- c("Season", "Attendance", "Points", "SDPoints")
 
 # Scraping attendance information
 # Load website
@@ -235,7 +378,7 @@ url <- 'https://afltables.com/afl/crowds/summary.html'
 webpage <- read_html(url)
 attendance_data_html <- html_nodes(webpage,'td')
 attendance_data_1 <- html_text(attendance_data_html)
-for (i in 1:29){
+for (i in 1:10){
 	attendance_data <- as.numeric(attendance_data_1[c(25+13*(i))]) # Choosing cells we want (and converting to numbers)
 	# Enter data into master dataset
 	if (afl_data$Season[i] == 2019-i){
@@ -245,18 +388,6 @@ for (i in 1:29){
 
 # Create dataframes to store the points information for each year (copied over during for loops)
 # Creating many dataframes of different sizes so years with smaller league don't include data from other years
-data0 <- data.frame(a = numeric())
-for (i in 1:14){
-	data0 <- rbind(data0, c(NA))
-}
-names(data0) <- c("a")
-
-data1 <- data.frame(a = numeric())
-for (i in 1:15){
-	data1 <- rbind(data1, c(NA))
-}
-names(data1) <- c("a")
-
 data2 <- data.frame(a = numeric())
 for (i in 1:16){
 	data2 <- rbind(data2, c(NA))
@@ -290,7 +421,7 @@ for (i in 1:18){
 names(data6) <- c("a")
 
 # Running a for loop to scrape the data automatically
-for (i in 1:29){
+for (i in 1:10){
 	# Loading website
 	url <- paste0('https://en.wikipedia.org/wiki/Template:AFL_Ladder/', 2019-i) # URL automatically runs through every year since 1990
 	webpage <- read_html(url)
@@ -298,26 +429,6 @@ for (i in 1:29){
 	points_data <- html_text(points_data_html)
 	# The "if" statements are where the dataframes created earlier will come into play
 	# Each "if" statement saves the mean and standard deviation of points accumulated by teams that year
-	# This one is for 1990, the only year with 14 teams
-	if (2019-i == 1990){
-		for (j in 1:14){
-			data0$a[j] <- as.numeric(points_data[c(4+(10*j))])
-			if (afl_data$Season[i] == 2019-i){
-				afl_data$Points[i] = mean(data0$a)
-				afl_data$SDPoints[i] = sd(data0$a)
-			}
-		}
-	}
-	# This one is for 1991-1994, with 15 teams
-	if (2019-i > 1990 && 2019-i < 1995){
-		for (j in 1:15){
-			data1$a[j] <- as.numeric(points_data[c(4+(10*j))])
-			if (afl_data$Season[i] == 2019-i){
-				afl_data$Points[i] = mean(data1$a)
-				afl_data$SDPoints[i] = sd(data1$a)
-			}
-		}
-	}
 	# This one is for 1995-2010, with 16 teams
 	if (2019-i > 1994 && 2019-i < 2011){
 		for (j in 1:16){
@@ -389,10 +500,16 @@ for (i in 1:29){
 	}
 }
 
-# The odds were pulled manually from the spreadsheet (mean of home odds by year)
-# The first number is for 2018 and proceeds until 2009
-# 2009 only has data from June-September, so less data points; considered removing but it is consistent with trends
-afl_data$Odds = c(2.19053, 2.01072, 2.55420, 2.36029, 2.40043, 2.92676, 2.99179, 2.48219, 2.05516, 2.16957, rep(NA, 19))
+afl_odds <- read.csv("afl_odds.csv")
+
+afl_odds_by_year <- split(afl_odds, afl_odds$Date)
+
+for (i in 1:10){
+  afl_data$OddsHome[(i)] <- mean(afl_odds_by_year[[(11-i)]]$Home)
+  afl_data$OddsFavorite[(i)] <- mean(afl_odds_by_year[[(11-i)]]$Favorite)
+  afl_data$OddsUnderdog[(i)] <- mean(afl_odds_by_year[[(11-i)]]$Underdog)
+  afl_data$Differential[(i)] <- mean(afl_odds_by_year[[(11-i)]]$Differential)
+}
 ```
 
 
@@ -400,14 +517,14 @@ The AFL has 18 teams, however the format of the league is different than that of
 
 The attendance data was scraped from afltables.com.
 
-The points data was scraped from wikipedia.org. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
+The points data was scraped from wikipedia.org. The functions 'mean' and 'sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(afl_data$SDPoints[1:10]~afl_data$Attendance[1:10])
-plot(afl_data$Attendance[1:10], afl_data$SDPoints[1:10], xlim = c(31000, 40000), ylim = c(13,23))
+fit <- lm(afl_data$Attendance~afl_data$SDPoints)
+plot(afl_data$SDPoints, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(13,23))
 abline(fit)
-text(afl_data$SDPoints[1:10]~afl_data$Attendance[1:10], labels=(afl_data$Season[1:10]),data=afl_data, cex=.8, pos=1)
-cor(afl_data$Attendance[1:10], afl_data$SDPoints[1:10])
+text(afl_data$Attendance~afl_data$SDPoints, labels=(afl_data$Season),data=afl_data, cex=.8, pos=1)
+cor(afl_data$Attendance, afl_data$SDPoints)
 ```
 
 The correlation coefficient of -0.325 indicates that there is a moderate negative correlation between the average attendance and the standard deviation of the points that teams accumulated. This points to AFL fans valuing parity more than in the European football leagues.
@@ -415,14 +532,46 @@ The correlation coefficient of -0.325 indicates that there is a moderate negativ
 The odds data was inputted manually from a spreadsheet database. The mean of the home odds for each game was taken for each season. The plot of attendance versus home odds is shown below.
 
 ```{r, eval=TRUE}
-fit <- lm(afl_data$Odds[1:10]~afl_data$Attendance[1:10])
-plot(afl_data$Attendance[1:10], afl_data$Odds[1:10], xlim = c(31000, 40000), ylim = c(1.8,3.2))
+fit <- lm(afl_data$Attendance~afl_data$OddsHome)
+plot(afl_data$OddsHome, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(1.8,3.2))
 abline(fit)
-text(afl_data$Odds[1:10]~afl_data$Attendance[1:10], labels=(afl_data$Season[1:10]),data=afl_data, cex=.8, pos=4)
-cor(afl_data$Attendance[1:10], afl_data$Odds[1:10])
+text(afl_data$Attendance~afl_data$OddsHome, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
+cor(afl_data$Attendance, afl_data$OddsHome)
 ```
 
 The correlation coefficient of -0.709 indicates that there is a strong negative correlation between the average attendance and the odds of the home team winning. Exactly the opposite of the EPL, the AFL gets better attendance when the home team has lower odds of winning. This also points to AFL fans' tendency to value parity.
+
+```{r, eval=TRUE}
+fit <- lm(afl_data$Attendance~afl_data$OddsFavorite)
+plot(afl_data$OddsFavorite, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(1.25,1.5))
+abline(fit)
+text(afl_data$Attendance~afl_data$OddsFavorite, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
+cor(afl_data$Attendance, afl_data$OddsFavorite)
+```
+
+There is a strong positive correlation (0.722) between a decrease in the favored team's chances of winning and average attendance. This supports our hypothesis that fans respond to uncertainty of outcome.
+
+```{r, eval=TRUE}
+fit <- lm(afl_data$Attendance~afl_data$OddsUnderdog)
+plot(afl_data$OddsUnderdog, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(3.25,6.25))
+abline(fit)
+text(afl_data$Attendance~afl_data$OddsUnderdog, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
+cor(afl_data$Attendance, afl_data$OddsUnderdog)
+```
+
+The correlation coefficient of -0.693 shows a strong positive relationship between attendance and uncertainty of outcome. This further supports our hypothesis.
+
+```{r, eval=TRUE}
+fit <- lm(afl_data$Attendance~afl_data$Differential)
+plot(afl_data$Differential, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(2,5))
+abline(fit)
+text(afl_data$Attendance~afl_data$Differential, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
+cor(afl_data$Attendance, afl_data$Differential)
+```
+
+Finally, we see that there is a strong negative correlation of -0.696 between the difference of underdog odds and favorite odds, further reinforcing the fans' propensity towards attending games in seasons which have greater uncertainty of outcome.
+
+The consistent strong relationships through this analysis show that AFL fans respond to uncertainty of outcome in a much stronger manner than fans in the EPL, Bundesliga, or Serie A. The relationship between these factors is opposite for the AFL as opposed to the EPL.
 
 The full dataset is included below.
 
