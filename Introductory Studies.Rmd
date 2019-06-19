@@ -1,8 +1,7 @@
 ---
 title: "Introductory Studies"
 output:
-  html_document:
-    df_print: paged
+  pdf_document
 ---
 
 ```{r, echo=FALSE, results=FALSE}
@@ -180,7 +179,7 @@ Here we have the plot of underdog odds against attendance. Our hypothesis predic
 
 ```{r, eval=TRUE}
 fit <- lm(epl_data$Attendance ~ epl_data$OddsUnderdog)
-plot(epl_data$OddsUnderdog, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(4.5, 6.0))
+plot(epl_data$OddsUnderdog, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(4.5, 7))
 abline(fit)
 text(epl_data$Attendance~epl_data$OddsUnderdog, labels=(epl_data$Season), cex=.8, pos=4)
 cor(epl_data$Attendance, epl_data$OddsUnderdog)
@@ -304,7 +303,7 @@ The odds data was scraped from football-data.co.uk. The mean of the home odds, f
 
 ```{r, eval=TRUE}
 fit <- lm(ser_data$Attendance ~ ser_data$OddsHome)
-plot(ser_data$OddsHome, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.5, 3.2))
+plot(ser_data$OddsHome, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.2, 3.2))
 abline(fit)
 text(ser_data$Attendance~ser_data$OddsHome, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$OddsHome)
@@ -328,7 +327,7 @@ Here we have the plot of underdog odds against attendance. Our hypothesis predic
 
 ```{r, eval=TRUE}
 fit <- lm(ser_data$Attendance ~ ser_data$OddsUnderdog)
-plot(ser_data$OddsUnderdog, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(4.5, 6.0))
+plot(ser_data$OddsUnderdog, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(4.5, 6.9))
 abline(fit)
 text(ser_data$Attendance~ser_data$OddsUnderdog, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$OddsUnderdog)
