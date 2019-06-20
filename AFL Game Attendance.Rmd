@@ -1,0 +1,160 @@
+---
+title: "AFL Game Attendance"
+output: pdf_document
+---
+
+```{r, echo=FALSE, results=FALSE}
+library(rvest)
+
+afl_byes <- data.frame(team = character())
+
+for (i in 1:10){
+	url <- paste0('https://afltables.com/afl/seas/', 2008+i, '.html#1')
+	webpage <- read_html(url)
+	afl_bye_info <- html_nodes(webpage, 'td table+ table td:nth-child(2) , td td tt') %>%
+    html_text()
+	afl_bye_info <- matrix(unlist(afl_bye_info))
+	n=nrow(afl_bye_info)
+	for (j in 1:n){
+	  newrow = data.frame(afl_bye_info[j])
+	  afl_byes <- rbind(afl_byes, newrow)
+	}
+}
+n=nrow(afl_byes)
+
+afl_byes <- as.matrix(afl_byes)
+for (k in 1:n-1){
+	if (isTRUE(afl_byes[k] != "Bye" && afl_byes[k] == afl_byes[(k+1)])){
+	  afl_byes <- afl_byes[-c(k)]
+	}
+}
+afl_byes <- matrix(unlist(afl_byes))
+
+afl_games <- data.frame(Date = character(), Home = character(), Away = character(), Attendance = numeric())
+afl_teams <- data.frame(team = character())
+
+for (i in 1:10){
+	url <- paste0('https://afltables.com/afl/seas/', 2008+i, '.html#1')
+	webpage <- read_html(url)
+	afl_teams_data <- html_nodes(webpage,'td:nth-child(1) td:nth-child(1)') %>%
+	  html_text()
+	afl_teams_data <- matrix(unlist(afl_teams_data))
+	n = nrow(afl_teams_data)
+	for (j in 1:n){
+	  newrow <- data.frame(afl_teams_data[(j)])
+	  afl_teams <- rbind(afl_teams,newrow)
+	}
+}
+
+afl_teams <- afl_teams[-c(2605), ]
+afl_teams <- as.matrix(unlist(afl_teams))
+
+n=nrow(afl_teams)
+
+afl_game_info <- data.frame(Team = character(), Bye = character())
+names(afl_game_info) <- c("Team", "Bye")
+
+for (i in 1:n){
+  newrow = data.frame(afl_teams[i], afl_byes[i])
+  afl_game_info <- rbind(afl_game_info, newrow)
+}
+
+afl_team_data <- data.frame(Team = character())
+
+for (i in 1:n){
+  if (afl_game_info$afl_byes.i.[i] != "Bye"){
+    newrow = data.frame(afl_game_info$afl_teams.i.[i])
+    afl_team_data <- rbind(afl_team_data, newrow)
+  }
+}
+
+afl_team_data <- as.matrix(afl_team_data)
+
+afl_data_1 <- data.frame(Home = character(), Away = character())
+
+n = nrow(afl_team_data)/2
+
+for (i in 1:n){
+  newrow = data.frame(afl_team_data[2*i-1], afl_team_data[2*i])
+  afl_data_1 <- rbind(afl_data_1, newrow)
+}
+
+afl_data_2 <- data.frame(day=character(), date=character(), year=numeric(), time=numeric(), attendance=numeric(), venue=character())
+
+for (i in 1:10){
+	url <- paste0('https://afltables.com/afl/seas/', 2008+i, '.html#1')
+	webpage <- read_html(url)
+	afl_game_info <- html_nodes(webpage, 'td tr:nth-child(1) td:nth-child(4)') %>%
+	  html_text
+	afl_game_info <- as.matrix(afl_game_info)
+	n=nrow(afl_game_info)
+	afl_game_info <- gsub("\\s*\\([^\\)]+\\)", "", afl_game_info)
+	afl_game_info <- strsplit(afl_game_info, " ")
+	for (j in 1:n){
+  	day <- afl_game_info[[j]][1]
+  	date <- afl_game_info[[j]][2]
+  	time <- afl_game_info[[j]][3]
+  	attendance <- afl_game_info[[j]][6]
+  	venue <- afl_game_info[[j]][8]
+  	afl_game_info[[j]] <- strsplit(afl_game_info[[j]][[2]], "-")
+  	afl_game_info[[j]] <- matrix(unlist(afl_game_info[[j]]))
+  	year <- afl_game_info[[j]][3]
+  	newrow = data.frame(day, date, year, time, attendance, venue)
+  	afl_data_2 <- rbind(afl_data_2, newrow)
+	}
+}
+
+afl_data <- cbind(afl_data_2, afl_data_1)
+
+names(afl_data) = c("Day", "Date", "Year", "Time", "Attendance", "Venue", "Home", "Away")
+
+afl_data_with_odds <- data.frame()
+
+n = nrow(afl_data)
+m = nrow(afl_odds_2)
+for (i in 1:m){
+  for (j in 1:n){
+    if (isTRUE(afl_data$Year[j] == afl_odds_2$Date[i] && afl_data$Home[j] == afl_odds_2$Home...3[i] && afl_data$Away[j] == afl_odds_2$Away[i])){
+      newrow = data.frame(afl_data$Day[j], afl_data$Date[j], afl_data$Year[j], afl_data$Time[j], afl_data$Home[j], afl_data$Away[j], afl_data$Attendance[j], afl_data$Venue[j], afl_odds_2$Home.Odds[i], afl_odds_2$Away.Odds[i], afl_odds_2$Total.Score.Close[i], afl_odds_2$Favorite[i], afl_odds_2$Underdog[i], afl_odds_2$Differential[i])
+      afl_data_with_odds <- rbind(afl_data_with_odds, newrow)
+    }
+  }
+}
+
+names(afl_data_with_odds) = c("Day", "Date", "Year", "Time", "Home", "Away", "Attendance", "Venue", "Home.Odds", "Away.Odds", "Line", "Favorite", "Underdog", "Differential")
+
+afl_data_with_odds$Attendance <- gsub(",", "", afl_data_with_odds$Attendance)
+
+afl_data_with_odds$Attendance <- as.numeric(afl_data_with_odds$Attendance)
+
+write.csv(afl_data_with_odds, "afl.csv")
+
+afl <- afl_data_with_odds
+
+venueavg <- data.frame(venue=character(), attendance=numeric())
+
+for (i in 1:22){
+    venueaverage <- mean(afl$Attendance[afl$Venue==levels(afl$Venue)[i]])
+    venue <- levels(afl$Venue)[i]
+    newrow = data.frame(venue, venueaverage)
+    venueavg <- rbind(venueavg, newrow)
+}
+
+afl$venueavg <- NA
+n = nrow(afl)
+m = nrow(venueavg)
+for (i in 1:n){
+  for (j in 1:m){
+    if (afl$Venue[i] == venueavg$venue[j]){
+      afl$venueavg[i] <- venueavg$venueaverage[j]
+    }
+  }
+}
+
+afl$Attendance_Differential <- NA
+for (i in 1:n){
+  afl$Attendance_Differential[i] = afl$venueavg[i]-afl$Attendance[i]
+}
+
+write.csv(afl, "afl_games.csv")
+```
