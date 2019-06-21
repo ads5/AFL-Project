@@ -1,0 +1,89 @@
+---
+title: "Basic_Analysis"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+afl <- read.csv("afl_games.csv")
+```
+
+```{r, eval=TRUE}
+plot(afl$Day)
+```
+We see that the majority of games are on Saturdays and Sundays. We can perform further analysis to determine how day of week affects attendance.
+
+```{r, eval=TRUE}
+hist(afl$TimeBucket)
+```
+Time bucket allows us to split the times into more easily workable data. We can see here that most of the games occur in the 1 o'clock and the 7 o'clock hours (start between 1 and 2 and between 7 and 8). We can perform further analysis to determine if time of day affects attendance. Possible interaction between time of day and day of week.
+
+```{r, eval=TRUE}
+hist(afl$Attendance, breaks = 30)
+afl$logAttendance = log(afl$Attendance)
+hist(afl$logAttendance)
+afl$sqrtAttendance = sqrt(afl$Attendance)
+hist(afl$sqrtAttendance)
+```
+Attendance may be our response variable as we are trying to determine the factors which influence fans to attend games. The histogram shows a right skew, so I tried an exponential transformation. This results in a left-skewed histogram. As such, I tried a square root transformation which gives us the most normal distribution of the three.
+
+```{r, eval=TRUE}
+plot(afl$Venue)
+```
+This plot simply shows which stadiums host the most games. We see that a majority of the games are played at M.C.G. and Docklands.
+
+```{r, eval=TRUE}
+hist(afl$Home.Odds, breaks = 40)
+afl$logHome.Odds = log(afl$Home.Odds)
+hist(afl$logHome.Odds)
+hist(afl$Away.Odds, breaks = 40)
+afl$logAway.Odds = log(afl$Away.Odds)
+hist(afl$logAway.Odds)
+```
+Both home odds and away odds are extremely skewed. Taking the log of the log creates a much more difficult result to interpret and still doesn't give us normally distributed data. These variables will be two of the most important of our data, but as they correlated we can only use one. I show other ways we can incorporate this data below.
+
+```{r, eval=TRUE}
+hist(afl$Line)
+```
+The data for the over-under of the games is relatively normally distributed. However, only games from 2014 and later have over-under data.
+
+```{r, eval=TRUE}
+hist(afl$Favorite, breaks = 10)
+afl$logFavorite = log(afl$Favorite)
+hist(afl$logFavorite)
+hist(afl$Underdog, breaks = 40)
+afl$logUnderdog = log(afl$Underdog)
+hist(afl$logUnderdog)
+```
+The favorite odds and the underdog odds also aren't great to work with as they have huge amounts of right skewness as well. These variables will also require further transformation if we are to use them.
+
+```{r, eval=TRUE}
+hist(afl$Differential, breaks = 25)
+afl$logDifferential = log(afl$Differential)
+hist(afl$logDifferential)
+```
+This is my personal favorite of the odds variables. It shows the difference between the odds of the favorite and the odds of the underdog. It also has a severe right skew but the log transformation works to perfection and creates an almost perfectly normal histogram (with slight left skew). I believe this variable provides the most pertinent information regarding how far apart the teams are in chances of winning the game. It could potentially be used in conjunction with home odds to create a model as the two may be able to provide different information.
+
+```{r, eval=TRUE}
+hist(afl$Attendance_Differential)
+```
+Attendance differential shows the difference in attendance between the actual versus the average attendance (for that venue) for each game. The data are relatively normal although the tails are slightly long.
+
+```{r, eval=TRUE}
+hist(afl$HomeDifferential, breaks = 14)
+```
+This is the same as differential but it shows the difference between the actual versus average attendance at the venue but only for the home team's games (teases out variance due to home team).
+
+```{r, eval=TRUE}
+hist(afl$HomeDifferentialPct, breaks = 20)
+```
+This is my favorite attendance statistic because it shows the percentage difference between the team's average home attendance at a specific venue and the actual attendance for every individual game. This gives better information than strictly numerical values because it scales the change based on how many people generally attend that team's home games at that stadium.
+
+```{r, eval=TRUE}
+fit <- lm(HomeDifferentialPct ~ Day + TimeBucket + Home.Odds + Differential, data = afl)
+library(car)
+vif(fit)
+fit1 <- step(fit)
+summary(fit1)
+fit <- lm(HomeDifferentialPct ~ Day + TimeBucket + Differential, data = afl)
+summary(fit)
+```
