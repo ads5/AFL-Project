@@ -110,6 +110,9 @@ names(afl_data) = c("Day", "Date", "Year", "Time", "Attendance", "Venue", "Home"
 
 afl_data_with_odds <- data.frame()
 
+library(readxl)
+afl_odds_2 <- read_excel("afl_odds_2.xlsx")
+
 n = nrow(afl_data)
 m = nrow(afl_odds_2)
 for (i in 1:m){
@@ -153,7 +156,68 @@ for (i in 1:n){
 
 afl$Attendance_Differential <- NA
 for (i in 1:n){
-  afl$Attendance_Differential[i] = afl$venueavg[i]-afl$Attendance[i]
+  afl$Attendance_Differential[i] = afl$Attendance[i]-afl$venueavg[i]
+}
+
+n = nlevels(afl$Home)
+m = nlevels(afl$Venue)
+l = nrow(afl)
+afl$HomeVenueAvg <- NA
+
+for (i in 1:n){
+  team = levels(afl$Home)[i]
+  for (j in 1:m){
+    venue = levels(afl$Venue)[j]
+    for (k in 1:l){
+      if (team == afl$Home[k] && venue == afl$Venue[k]){
+        afl$HomeVenueAvg[k] <- mean(afl$Attendance[afl$Venue==venue & afl$Home==team])
+      }
+    }
+  }
+}
+
+afl$HomeDifferential <- NA
+afl$HomeDifferentialPct <- NA
+for (i in 1:l){
+  afl$HomeDifferential[i] = afl$Attendance[i]-afl$HomeVenueAvg[i]
+  afl$HomeDifferentialPct[i] = afl$HomeDifferential[i]/afl$HomeVenueAvg[i]
+}
+setwd("/Users/austinsechrest/Documents/Github/LISH-AFL-Project")
+afl <- read.csv("afl_games.csv")
+
+afl$Time <- as.character(afl$Time)
+afl$TimeBucket <- NA
+
+n = nrow(afl)
+
+for (i in 1:n){
+  if (startsWith(afl$Time[i], '12:') || startsWith(afl$Time[i], '11:')){
+    afl$TimeBucket[i] <- 12
+  }
+  if (startsWith(afl$Time[i], '1:')){
+    afl$TimeBucket[i] <- 1
+  }
+  if (startsWith(afl$Time[i], '2:')){
+    afl$TimeBucket[i] <- 2
+  }
+  if (startsWith(afl$Time[i], '3:')){
+    afl$TimeBucket[i] <- 3
+  }
+  if (startsWith(afl$Time[i], '4:')){
+    afl$TimeBucket[i] <- 4
+  }
+  if (startsWith(afl$Time[i], '5:')){
+    afl$TimeBucket[i] <- 5
+  }
+  if (startsWith(afl$Time[i], '6:')){
+    afl$TimeBucket[i] <- 6
+  }
+  if (startsWith(afl$Time[i], '7:')){
+    afl$TimeBucket[i] <- 7
+  }
+  if (startsWith(afl$Time[i], '8:')){
+    afl$TimeBucket[i] <- 8
+  }
 }
 
 write.csv(afl, "afl_games.csv")
