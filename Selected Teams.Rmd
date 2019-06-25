@@ -1,0 +1,21 @@
+---
+title: "Full Data Selected Teams"
+output: pdf_document
+---
+
+```{r, eval=TRUE}
+setwd("/Users/austinsechrest/Documents/Github/LISH-AFL-Project/")
+library(readxl)
+afl<-read_excel("afl_games.xlsx")
+```
+
+```{r, eval=TRUE}
+nmfc <- afl[afl$Home=="North Melbourne",]
+geelong <- afl[afl$Home=="Geelong",]
+nmfc_home_away <- afl[afl$Home=="North Melbourne" | afl$Away=="North Melbourne",]
+geelong_home_away <- afl[afl$Home=="Geelong" | afl$Away=="Geelong",]
+write.csv(nmfc, "nmfc.csv")
+write.csv(nmfc_home_away, "nmfc_home_away.csv")
+write.csv(geelong, "geelong.csv")
+write.csv(geelong_home_away, "geelong_home_away.csv")
+```
