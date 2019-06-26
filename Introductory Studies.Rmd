@@ -125,6 +125,10 @@ for (i in 1:11){
 epl_data
 bun_data
 ser_data
+
+write.csv(epl_data, "epl_data.csv")
+write.csv(bun_data, "bun_data.csv")
+write.csv(ser_data, "ser_data.csv")
 ```
 
 We are looking at data from major European football leagues to highlight the importance of our research question. While one might posit that spectators are drawn to attend games because of the intrigue of an uncertain outcome, we can show that this basic analysis alone is not enough to draw any conclusions from. In order to gain a clearer picture of the factors which draw spectators to attend games, we will need more in-depth research.
@@ -142,8 +146,9 @@ The attendance data was pulled manually from worldfootball.net.
 The points data was scraped from various sources. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
+epl_data <- read.csv("epl_data.csv")
 fit <- lm(epl_data$Attendance ~ epl_data$SDPoints)
-plot(epl_data$SDPoints, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(12,22))
+plot(epl_data$SDPoints, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(12,22), main = "EPL SD of Team Points vs. Attendance, 2009-10 to 2018-19")
 abline(fit)
 text(epl_data$Attendance~epl_data$SDPoints, labels=(epl_data$Season), cex=.8, pos=4)
 cor(epl_data$Attendance, epl_data$SDPoints)
@@ -155,7 +160,7 @@ The odds data was scraped from football-data.co.uk. The mean of the home odds, f
 
 ```{r, eval=TRUE}
 fit <- lm(epl_data$Attendance ~ epl_data$OddsHome)
-plot(epl_data$OddsHome, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(2.5, 3.2))
+plot(epl_data$OddsHome, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(2.5, 3.2), main = "EPL Home Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Home Team Odds", ylab = "Attendance")
 abline(fit)
 text(epl_data$Attendance~epl_data$OddsHome, labels=(epl_data$Season), cex=.8, pos=4)
 cor(epl_data$Attendance, epl_data$OddsHome)
@@ -167,7 +172,7 @@ Next is the plot of favorite odds against attendance. Our hypothesis would expec
 
 ```{r, eval=TRUE}
 fit <- lm(epl_data$Attendance ~ epl_data$OddsFavorite)
-plot(epl_data$OddsFavorite, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(1.4, 2.4))
+plot(epl_data$OddsFavorite, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(1.4, 2.4), main = "EPL Favorite Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Favored Team Odds", ylab = "Attendance")
 abline(fit)
 text(epl_data$Attendance~epl_data$OddsFavorite, labels=(epl_data$Season), cex=.8, pos=4)
 cor(epl_data$Attendance, epl_data$OddsFavorite)
@@ -191,7 +196,7 @@ Our last plot for the EPL data uses the differential in favorite and underdog od
 
 ```{r, eval=TRUE}
 fit <- lm(epl_data$Attendance ~ epl_data$Differential)
-plot(epl_data$Differential, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(2.5, 5))
+plot(epl_data$Differential, epl_data$Attendance, ylim = c(33000, 39000), xlim = c(2.5, 5), main = "EPL Odds Differential vs. Attendance, 2008-09 to 2018-19", xlab = "Odds Difference", ylab = "Attendance")
 abline(fit)
 text(epl_data$Attendance~epl_data$Differential, labels=(epl_data$Season), cex=.8, pos=4)
 cor(epl_data$Attendance, epl_data$Differential)
@@ -216,8 +221,9 @@ The attendance data was pulled manually from worldfootball.net.
 The points data was scraped from kicker.de. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
+bun_data <- read.csv("bun_data.csv")
 fit <- lm(bun_data$Attendance ~ bun_data$SDPoints)
-plot(bun_data$SDPoints, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(12, 18))
+plot(bun_data$SDPoints, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(12, 18), main = "Bundesliga SD of Points vs. Attendance, 2008-09 to 2018-19", xlab = "SD of Points", ylab = "Attendance")
 abline(fit)
 text(bun_data$Attendance~bun_data$SDPoints, labels=(bun_data$Season), cex=.8, pos=4)
 cor(bun_data$Attendance, bun_data$SDPoints)
@@ -229,7 +235,7 @@ The odds data was scraped from football-data.co.uk. The mean of the home odds, f
 
 ```{r, eval=TRUE}
 fit <- lm(bun_data$Attendance ~ bun_data$OddsHome)
-plot(bun_data$OddsHome, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(2.3, 3.0))
+plot(bun_data$OddsHome, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(2.3, 3.0), main = "Bundesliga Home Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Home Team Odds", ylab = "Attendance")
 abline(fit)
 text(bun_data$Attendance~bun_data$OddsHome, labels=(bun_data$Season), cex=.8, pos=4)
 cor(bun_data$Attendance, bun_data$OddsHome)
@@ -241,7 +247,7 @@ Next is the plot of favorite odds against attendance. Our hypothesis would expec
 
 ```{r, eval=TRUE}
 fit <- lm(bun_data$Attendance ~ bun_data$OddsFavorite)
-plot(bun_data$OddsFavorite, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(1.4, 2.4))
+plot(bun_data$OddsFavorite, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(1.4, 2.4), main = "Bundesliga Favorite Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Favored Team Odds", ylab = "Attendance")
 abline(fit)
 text(bun_data$Attendance~bun_data$OddsFavorite, labels=(bun_data$Season), cex=.8, pos=4)
 cor(bun_data$Attendance, bun_data$OddsFavorite)
@@ -253,7 +259,7 @@ Here we have the plot of underdog odds against attendance. Our hypothesis predic
 
 ```{r, eval=TRUE}
 fit <- lm(bun_data$Attendance ~ bun_data$OddsUnderdog)
-plot(bun_data$OddsUnderdog, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(4.5, 6.0))
+plot(bun_data$OddsUnderdog, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(4.5, 6.0), main = "Bundesliga Underdog Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Underdog Odds", ylab = "Attendance")
 abline(fit)
 text(bun_data$Attendance~bun_data$OddsUnderdog, labels=(bun_data$Season), cex=.8, pos=4)
 cor(bun_data$Attendance, bun_data$OddsUnderdog)
@@ -265,7 +271,7 @@ Our last plot for the Bundesliga data uses the differential in favorite and unde
 
 ```{r, eval=TRUE}
 fit <- lm(bun_data$Attendance ~ bun_data$Differential)
-plot(bun_data$Differential, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(2, 4))
+plot(bun_data$Differential, bun_data$Attendance, ylim = c(41000, 46000), xlim = c(2, 4), main = "Bundesliga Difference in Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Difference in Odds", ylab = "Attendance")
 abline(fit)
 text(bun_data$Attendance~bun_data$Differential, labels=(bun_data$Season), cex=.8, pos=4)
 cor(bun_data$Attendance, bun_data$Differential)
@@ -290,8 +296,9 @@ The attendance data was pulled manually from worldfootball.net.
 The points data was scraped from espn.co.uk. The functions `mean' and `sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
+ser_data <- read.csv("ser_data.csv")
 fit <- lm(ser_data$Attendance ~ ser_data$SDPoints)
-plot(ser_data$SDPoints, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(14,21))
+plot(ser_data$SDPoints, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(14,21), main = "Serie A SD of Points vs. Attendance, 2008-09 to 2018-19", xlab = "SD of Points", ylab = "Attendance")
 abline(fit)
 text(ser_data$Attendance~ser_data$SDPoints, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$SDPoints)
@@ -303,7 +310,7 @@ The odds data was scraped from football-data.co.uk. The mean of the home odds, f
 
 ```{r, eval=TRUE}
 fit <- lm(ser_data$Attendance ~ ser_data$OddsHome)
-plot(ser_data$OddsHome, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.2, 3.2))
+plot(ser_data$OddsHome, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.2, 3.2), main = "Serie A Home Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Home Team Odds", ylab = "Attendance")
 abline(fit)
 text(ser_data$Attendance~ser_data$OddsHome, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$OddsHome)
@@ -315,7 +322,7 @@ Next is the plot of favorite odds against attendance. Our hypothesis would expec
 
 ```{r, eval=TRUE}
 fit <- lm(ser_data$Attendance ~ ser_data$OddsFavorite)
-plot(ser_data$OddsFavorite, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(1.4, 2.4))
+plot(ser_data$OddsFavorite, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(1.4, 2.4), main = "Serie A Favorite Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Favored Team Odds", ylab = "Attendance")
 abline(fit)
 text(ser_data$Attendance~ser_data$OddsFavorite, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$OddsFavorite)
@@ -327,7 +334,7 @@ Here we have the plot of underdog odds against attendance. Our hypothesis predic
 
 ```{r, eval=TRUE}
 fit <- lm(ser_data$Attendance ~ ser_data$OddsUnderdog)
-plot(ser_data$OddsUnderdog, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(4.5, 6.9))
+plot(ser_data$OddsUnderdog, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(4.5, 6.9), main = "Serie A Underdog Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Underdog Odds", ylab = "Attendance")
 abline(fit)
 text(ser_data$Attendance~ser_data$OddsUnderdog, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$OddsUnderdog)
@@ -339,7 +346,7 @@ Our last plot for the Serie A data uses the differential in favorite and underdo
 
 ```{r, eval=TRUE}
 fit <- lm(ser_data$Attendance ~ ser_data$Differential)
-plot(ser_data$Differential, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.75, 4.75))
+plot(ser_data$Differential, ser_data$Attendance, ylim = c(22000, 26000), xlim = c(2.75, 4.75), main = "Serie A Difference in Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Difference in Odds", ylab = "Attendance")
 abline(fit)
 text(ser_data$Attendance~ser_data$Differential, labels=(ser_data$Season), cex=.8, pos=4)
 cor(ser_data$Attendance, ser_data$Differential)
@@ -509,6 +516,8 @@ for (i in 1:10){
   afl_data$OddsUnderdog[(i)] <- mean(afl_odds_by_year[[(11-i)]]$Underdog)
   afl_data$Differential[(i)] <- mean(afl_odds_by_year[[(11-i)]]$Differential)
 }
+
+write.csv(afl_data, "afl_data.csv")
 ```
 
 
@@ -519,8 +528,9 @@ The attendance data was scraped from afltables.com.
 The points data was scraped from wikipedia.org. The functions 'mean' and 'sd' were used to generate the data in the dataset. The plot of attendance versus the standard deviation of points is shown below.
 
 ```{r, eval=TRUE}
+afl_data <- read.csv("afl_data.csv")
 fit <- lm(afl_data$Attendance~afl_data$SDPoints)
-plot(afl_data$SDPoints, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(13,23))
+plot(afl_data$SDPoints, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(13,23), main = "AFL SD of Points vs. Attendance, 2008-09 to 2018-19", xlab = "SD of Points", ylab = "Attendance")
 abline(fit)
 text(afl_data$Attendance~afl_data$SDPoints, labels=(afl_data$Season),data=afl_data, cex=.8, pos=1)
 cor(afl_data$Attendance, afl_data$SDPoints)
@@ -532,7 +542,7 @@ The odds data was inputted manually from a spreadsheet database. The mean of the
 
 ```{r, eval=TRUE}
 fit <- lm(afl_data$Attendance~afl_data$OddsHome)
-plot(afl_data$OddsHome, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(1.8,3.2))
+plot(afl_data$OddsHome, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(1.8,3.2), main = "AFL Home Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Home Team Odds", ylab = "Attendance")
 abline(fit)
 text(afl_data$Attendance~afl_data$OddsHome, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
 cor(afl_data$Attendance, afl_data$OddsHome)
@@ -542,7 +552,7 @@ The correlation coefficient of -0.709 indicates that there is a strong negative 
 
 ```{r, eval=TRUE}
 fit <- lm(afl_data$Attendance~afl_data$OddsFavorite)
-plot(afl_data$OddsFavorite, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(1.25,1.5))
+plot(afl_data$OddsFavorite, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(1.25,1.5), main = "AFL Favorite Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Favored Team Odds", ylab = "Attendance")
 abline(fit)
 text(afl_data$Attendance~afl_data$OddsFavorite, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
 cor(afl_data$Attendance, afl_data$OddsFavorite)
@@ -552,7 +562,7 @@ There is a strong positive correlation (0.722) between a decrease in the favored
 
 ```{r, eval=TRUE}
 fit <- lm(afl_data$Attendance~afl_data$OddsUnderdog)
-plot(afl_data$OddsUnderdog, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(3.25,6.25))
+plot(afl_data$OddsUnderdog, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(3.25,6.25), main = "AFL Underdog Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Underdog Odds", ylab = "Attendance")
 abline(fit)
 text(afl_data$Attendance~afl_data$OddsUnderdog, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
 cor(afl_data$Attendance, afl_data$OddsUnderdog)
@@ -562,7 +572,7 @@ The correlation coefficient of -0.693 shows a strong positive relationship betwe
 
 ```{r, eval=TRUE}
 fit <- lm(afl_data$Attendance~afl_data$Differential)
-plot(afl_data$Differential, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(2,5))
+plot(afl_data$Differential, afl_data$Attendance, ylim = c(31000, 40000), xlim = c(2,5), main = "AFL Difference in Odds vs. Attendance, 2008-09 to 2018-19", xlab = "Difference in Odds", ylab = "Attendance")
 abline(fit)
 text(afl_data$Attendance~afl_data$Differential, labels=(afl_data$Season),data=afl_data, cex=.8, pos=4)
 cor(afl_data$Attendance, afl_data$Differential)
