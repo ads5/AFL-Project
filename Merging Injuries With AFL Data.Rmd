@@ -25,11 +25,11 @@ injuries <- read_excel("injuries_with_ratings.xlsx")
 injuries$...1 <- NULL
 
 # Create variables for players in top 5%, 10%, 25%, and 50% of all players (in that season)
-injuries$top5 <- as.numeric(injuries$ave_rating >= quantiles[20])
-injuries$top10 <- as.numeric(injuries$ave_rating >= quantiles[19])
-injuries$top25 <- as.numeric(injuries$ave_rating >= quantiles[16])
-injuries$top50 <- as.numeric(injuries$ave_rating >= quantiles[11])
-injuries$all <- as.numeric(injuries$ave_rating >= quantiles[1])
+injuries$top5 <- as.numeric(injuries$Avg.Rating >= quantiles[20])
+injuries$top10 <- as.numeric(injuries$Avg.Rating >= quantiles[19])
+injuries$top25 <- as.numeric(injuries$Avg.Rating >= quantiles[16])
+injuries$top50 <- as.numeric(injuries$Avg.Rating >= quantiles[11])
+injuries$all <- as.numeric(injuries$Avg.Rating >= quantiles[1])
 
 # Remove quantiles
 rm(quantiles)
@@ -38,7 +38,7 @@ rm(quantiles)
 ```{r, eval=TRUE}
 # Merge rows for same games
 for (i in 2:nrow(injuries)-1){
-  if (injuries$Round[i] == injuries$Round[i+1] && injuries$team[i] == injuries$team[i+1] && injuries$season[i] == injuries$season[i+1]){
+  if (injuries$Round[i] == injuries$Round[i+1] && injuries$Team[i] == injuries$Team[i+1] && injuries$Season[i] == injuries$Season[i+1]){
     injuries$top5[i+1] <- injuries$top5[i] + injuries$top5[i+1]
     injuries$top10[i+1] <- injuries$top10[i] + injuries$top10[i+1]
     injuries$top25[i+1] <- injuries$top25[i] + injuries$top25[i+1]
@@ -52,9 +52,10 @@ for (i in 2:nrow(injuries)-1){
 injuries <- na.omit(injuries)
 
 # Get rid of unnecessary variables
-injuries$firstname.x <- NULL
-injuries$lastname <- NULL
-injuries$ave_rating <- NULL
+injuries$First.Name <- NULL
+injuries$Last.Name <- NULL
+injuries$Avg.Rating <- NULL
+injuries$Reason <- NULL
 
 # Rename vars
 colnames(injuries) <- c("Season", "Round", "Date", "Team", "Opposition", "HA", "top5", "top10", "top25", "top50", "all")
@@ -79,7 +80,7 @@ injuries$...1 <- NULL
 afl$Time <- NULL
 
 # Change bad column names
-colnames(afl) <- c("Round", "Day", "Date", "Year", "Time", "Home", "Away", "Attendance", "Venue", "Home.Odds", "Away.Odds", "Over.Under", "Favorite.Odds", "Underdog.Odds", "Difference_in_Odds", "Avg.Venue.Attendance", "Attendance_Difference_vs_Avg", "Home.Venue.Average", "Attendance_Difference_vs_Home_Avg", "Pct_Difference_vs_Home_Avg", "Time")
+colnames(afl) <- c("Round", "Day", "Date", "Year", "Home", "Away", "Attendance", "Venue", "Home.Odds", "Away.Odds", "Over.Under", "Favorite.Odds", "Underdog.Odds", "Difference_in_Odds", "Avg.Venue.Attendance", "Attendance_Difference_vs_Avg", "Home.Venue.Average", "Attendance_Difference_vs_Home_Avg", "Pct_Difference_vs_Home_Avg", "Time")
 
 # Check team names
 afl$Home <- as.factor(afl$Home)
@@ -148,6 +149,12 @@ for (i in 1:nrow(afl)){
     afl$Away.Injuries.50[i] <- 0
   }
 }
+
+afl$Total.Injuries.5 <- afl$Home.Injuries.5 + afl$Away.Injuries.5
+afl$Total.Injuries.10 <- afl$Home.Injuries.10 + afl$Away.Injuries.10
+afl$Total.Injuries.25 <- afl$Home.Injuries.25 + afl$Away.Injuries.25
+afl$Total.Injuries.50 <- afl$Home.Injuries.50 + afl$Away.Injuries.50
+afl$Total.Injuries.Total <- afl$Home.Injuries.Total + afl$Away.Injuries.Total
 
 write.csv(afl, "afl_with_injuries.csv")
 ```

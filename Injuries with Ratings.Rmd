@@ -31,7 +31,6 @@ colnames(injuries)[colnames(injuries)=="Season"] <- "season"
 injuries$Out <- NULL
 injuries$player <- NULL
 injuries$...1 <- NULL
-injuries$Reason <- NULL
 injuries$Team <- NULL
 injuries$Opposition <- NULL
 
@@ -60,10 +59,18 @@ injuries_with_season_ratings <- merge(injuries, ratings, by = c("season", "team"
 injuries_with_season_ratings <- injuries_with_season_ratings[startsWith(injuries_with_season_ratings$firstname.x, injuries_with_season_ratings$firstname.y),]
 
 # Reorder columns and remove unnecessary columns
-injuries_with_season_ratings <- injuries_with_season_ratings[,c(1,5,4,2,8,6,7,3,9)]
+injuries_with_season_ratings <- injuries_with_season_ratings[,c(1,5,4,2,9,7,8,3,10,6)]
 
 # Sort data
 injuries_with_season_ratings <- injuries_with_season_ratings[order(injuries_with_season_ratings$season, injuries_with_season_ratings$team, injuries_with_season_ratings$Round),]
+
+# Rename columns
+colnames(injuries_with_season_ratings) <- c("Season", "Round", "Date", "Team", "Opposition", "HA", "First.Name", "Last.Name", "Avg.Rating", "Reason")
+
+# Remove omissions
+injuries_with_season_ratings <- injuries_with_season_ratings[injuries_with_season_ratings$Reason != "Omitted",]
+
+injuries_with_season_ratings <- na.omit(injuries_with_season_ratings)
 
 # Write csv
 write.csv(injuries_with_season_ratings, "Injuries_with_Ratings.csv")
