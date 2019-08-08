@@ -1,0 +1,146 @@
+---
+title: "Basic Analysis With Injuries"
+output: pdf_document
+---
+
+---
+title: "Basic_Analysis"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(readxl)
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets/")
+afl <- read_excel("afl_with_injuries.xlsx")
+```
+
+```{r, eval=TRUE}
+plot(factor(afl$Day))
+```
+We see that the majority of games are on Saturdays and Sundays. We can perform further analysis to determine how day of week affects attendance.
+
+```{r, eval=TRUE}
+hist(afl$Time)
+```
+Time bucket allows us to split the times into more easily workable data. We can see here that most of the games occur in the 1 o'clock and the 7 o'clock hours (start between 1 and 2 and between 7 and 8). We can perform further analysis to determine if time of day affects attendance. Possible interaction between time of day and day of week.
+
+```{r, eval=TRUE}
+hist(afl$Attendance, breaks = 30)
+afl$logAttendance = log(afl$Attendance)
+hist(afl$logAttendance)
+afl$sqrtAttendance = sqrt(afl$Attendance)
+hist(afl$sqrtAttendance)
+```
+Attendance may be our response variable as we are trying to determine the factors which influence fans to attend games. The histogram shows a right skew, so I tried an exponential transformation. This results in a left-skewed histogram. As such, I tried a square root transformation which gives us the most normal distribution of the three.
+
+```{r, eval=TRUE}
+plot(factor(afl$Venue))
+```
+This plot simply shows which stadiums host the most games. We see that a majority of the games are played at M.C.G. and Docklands.
+
+```{r, eval=TRUE}
+hist(afl$Home.Odds, breaks = 40)
+afl$logHome.Odds = log(afl$Home.Odds)
+hist(afl$logHome.Odds)
+hist(afl$Away.Odds, breaks = 40)
+afl$logAway.Odds = log(afl$Away.Odds)
+hist(afl$logAway.Odds)
+```
+Both home odds and away odds are extremely skewed. Taking the log of the log creates a much more difficult result to interpret and still doesn't give us normally distributed data. These variables will be two of the most important of our data, but as they correlated we can only use one. I show other ways we can incorporate this data below.
+
+```{r, eval=TRUE}
+afl$Over.Under <- as.numeric(afl$Over.Under)
+hist(afl$Over.Under)
+```
+The data for the over-under of the games is relatively normally distributed. However, only games from 2014 and later have over-under data.
+
+```{r, eval=TRUE}
+hist(afl$Favorite.Odds, breaks = 10)
+afl$logFavorite.Odds = log(afl$Favorite.Odds)
+hist(afl$logFavorite.Odds)
+hist(afl$Underdog.Odds, breaks = 40)
+afl$logUnderdog.Odds = log(afl$Underdog.Odds)
+hist(afl$logUnderdog.Odds)
+```
+The favorite odds and the underdog odds also aren't great to work with as they have huge amounts of right skewness as well. These variables will also require further transformation if we are to use them.
+
+```{r, eval=TRUE}
+hist(afl$Difference_in_Odds, breaks = 25)
+afl$logDifference_in_Odds = log(afl$Difference_in_Odds)
+hist(afl$logDifference_in_Odds)
+```
+This is my personal favorite of the odds variables. It shows the difference between the odds of the favorite and the odds of the underdog. It also has a severe right skew but the log transformation works to perfection and creates an almost perfectly normal histogram (with slight left skew). I believe this variable provides the most pertinent information regarding how far apart the teams are in chances of winning the game. It could potentially be used in conjunction with home odds to create a model as the two may be able to provide different information.
+
+```{r, eval=TRUE}
+hist(afl$Attendance_Difference_vs_Avg)
+```
+Attendance differential shows the difference in attendance between the actual versus the average attendance (for that venue) for each game. The data are relatively normal although the tails are slightly long.
+
+```{r, eval=TRUE}
+hist(afl$Attendance_Difference_vs_Home_Avg, breaks = 14)
+```
+This is the same as differential but it shows the difference between the actual versus average attendance at the venue but only for the home team's games (teases out variance due to home team).
+
+```{r, eval=TRUE}
+hist(afl$Pct_Difference_vs_Home_Avg, breaks = 20)
+```
+
+This is my favorite attendance statistic because it shows the percentage difference between the team's average home attendance at a specific venue and the actual attendance for every individual game. This gives better information than strictly numerical values because it scales the change based on how many people generally attend that team's home games at that stadium.
+
+```{r, eval=TRUE, results=FALSE, echo=FALSE}
+afl$Home.Injuries.5 <- as.numeric(afl$Home.Injuries.5)
+afl$Home.Injuries.10 <- as.numeric(afl$Home.Injuries.10)
+afl$Home.Injuries.25 <- as.numeric(afl$Home.Injuries.25)
+afl$Home.Injuries.50 <- as.numeric(afl$Home.Injuries.50)
+afl$Home.Injuries.Total <- as.numeric(afl$Home.Injuries.Total)
+afl$Away.Injuries.5 <- as.numeric(afl$Away.Injuries.5)
+afl$Away.Injuries.10 <- as.numeric(afl$Away.Injuries.10)
+afl$Away.Injuries.25 <- as.numeric(afl$Away.Injuries.25)
+afl$Away.Injuries.50 <- as.numeric(afl$Away.Injuries.50)
+afl$Away.Injuries.Total <- as.numeric(afl$Away.Injuries.Total)
+```
+
+```{r, eval=TRUE}
+plot(afl$Home.Injuries.5, afl$Attendance)
+plot(afl$Home.Injuries.10, afl$Attendance)
+plot(afl$Home.Injuries.25, afl$Attendance)
+plot(afl$Home.Injuries.50, afl$Attendance)
+plot(afl$Home.Injuries.Total, afl$Attendance)
+```
+
+```{r, eval=TRUE, echo=FALSE, results=FALSE}
+mean_by_round <- data.frame()
+for (i in 1:24){
+  newrow = data.frame(i, mean(afl$Attendance[afl$Round==i]), mean(afl$Home.Odds[afl$Round==i]), mean(afl$Away.Odds[afl$Round==i]), mean(afl$Favorite.Odds[afl$Round==i]), mean(afl$Underdog.Odds[afl$Round==i]), mean(afl$Difference_in_Odds[afl$Round==i]), mean(afl$Avg.Venue.Attendance[afl$Round==i]), mean(afl$Attendance_Difference_vs_Avg[afl$Round==i]), mean(afl$Home.Venue.Average[afl$Round==i]), mean(afl$Attendance_Difference_vs_Home_Avg[afl$Round==i]), mean(afl$Pct_Difference_vs_Home_Avg[afl$Round==i]), mean(afl$Time[afl$Round==i]), mean(afl$Home.Injuries.5[afl$Round==i]), mean(afl$Home.Injuries.10[afl$Round==i]), mean(afl$Home.Injuries.25[afl$Round==i]), mean(afl$Home.Injuries.50[afl$Round==i]), mean(afl$Home.Injuries.Total[afl$Round==i]), mean(afl$Away.Injuries.5[afl$Round==i]), mean(afl$Away.Injuries.10[afl$Round==i]), mean(afl$Away.Injuries.25[afl$Round==i]), mean(afl$Away.Injuries.50[afl$Round==i]), mean(afl$Away.Injuries.Total[afl$Round==i]))
+  mean_by_round <- rbind(mean_by_round, newrow)
+}
+names(mean_by_round) = c("Round", "Attendance", "Home.Odds", "Away.Odds", "Favorite.Odds", "Underdog.Odds", "Difference_in_Odds", "Avg_Venue_Attendance", "Difference_from_Avg_Attendance", "Home_Venue_Avg", "Difference_From_Home_Venue_Avg", "Pct_Chg_Home_Venue_Avg", "Time", "HomeInj5", "HomeInj10", "HomeInj25", "HomeInj50", "HomeInjAll", "AwayInj5", "AwayInj10", "AwayInj25", "AwayInj50", "AwayInjAll")
+mean_by_round
+```
+
+```{r, eval=TRUE}
+plot(afl$Attendance~afl$Round)
+plot(mean_by_round$Round, mean_by_round$Attendance)
+plot(mean_by_round$Favorite.Odds, mean_by_round$Attendance)
+plot(mean_by_round$Round, mean_by_round$Difference_From_Home_Venue_Avg)
+```
+From this table we see that Week 1 is generally an outlier. Attendances are far higher than normal based on all metrics while odds are much closer together than in any other week. Week 23 generally shows the opposite results. Week 1 games are also generally played later at night. On average, 11% more fans show up on Week 1 for teams that host games at that particular venue. 6% less fans than average attend games in Week 23 and Week 13. Week 24 likely doesn't provide good data as the sample size is extremely small (only one season had a 'Week 24').
+
+```{r, eval=TRUE, echo=FALSE, results=FALSE}
+mean_by_round_by_season <- data.frame()
+for (i in 1:24){
+  for (j in 2012:2018){
+    newrow = data.frame(i, j, mean(afl$Attendance[afl$Round==i & afl$Year==j]), mean(afl$Home.Odds[afl$Round==i & afl$Year==j]), mean(afl$Away.Odds[afl$Round==i & afl$Year==j]), mean(afl$Favorite.Odds[afl$Round==i & afl$Year==j]), mean(afl$Underdog.Odds[afl$Round==i & afl$Year==j]), mean(afl$Difference_in_Odds[afl$Round==i & afl$Year==j]), mean(afl$Avg.Venue.Attendance[afl$Round==i & afl$Year==j]), mean(afl$Attendance_Difference_vs_Avg[afl$Round==i & afl$Year==j]), mean(afl$Home.Venue.Average[afl$Round==i & afl$Year==j]), mean(afl$Attendance_Difference_vs_Home_Avg[afl$Round==i & afl$Year==j]), mean(afl$Pct_Difference_vs_Home_Avg[afl$Round==i & afl$Year==j]), mean(afl$Time[afl$Round==i & afl$Year==j]), mean(afl$Home.Injuries.5[afl$Round==i & afl$Year==j]), mean(afl$Home.Injuries.10[afl$Round==i & afl$Year==j]), mean(afl$Home.Injuries.25[afl$Round==i & afl$Year==j]), mean(afl$Home.Injuries.50[afl$Round==i & afl$Year==j]), mean(afl$Home.Injuries.Total[afl$Round==i & afl$Year==j]), mean(afl$Away.Injuries.5[afl$Round==i & afl$Year==j]), mean(afl$Away.Injuries.10[afl$Round==i & afl$Year==j]), mean(afl$Away.Injuries.25[afl$Round==i & afl$Year==j]), mean(afl$Away.Injuries.50[afl$Round==i & afl$Year==j]), mean(afl$Away.Injuries.Total[afl$Round==i & afl$Year==j]))
+    mean_by_round_by_season <- rbind(mean_by_round_by_season, newrow)
+  }
+}
+names(mean_by_round_by_season) = c("Round", "Season", "Attendance", "Home.Odds", "Away.Odds", "Favorite.Odds", "Underdog.Odds", "Difference_in_Odds", "Avg_Venue_Attendance", "Difference_from_Avg_Attendance", "Home_Venue_Avg", "Difference_From_Home_Venue_Avg", "Pct_Chg_Home_Venue_Avg", "Time", "HomeInj5", "HomeInj10", "HomeInj25", "HomeInj50", "HomeInjAll", "AwayInj5", "AwayInj10", "AwayInj25", "AwayInj50", "AwayInjAll")
+mean_by_round_by_season
+```
+
+```{r, eval=TRUE}
+plot(mean_by_round_by_season$Round, mean_by_round_by_season$Attendance)
+plot(mean_by_round_by_season$Favorite.Odds, mean_by_round_by_season$Attendance)
+plot(mean_by_round_by_season$Round, mean_by_round_by_season$Difference_From_Home_Venue_Avg)
+abline(h=0)
+```
