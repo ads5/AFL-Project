@@ -1,0 +1,24 @@
+---
+title: 'Basic Models: Team-Level'
+output: pdf_document
+---
+
+```{r, eval=TRUE}
+library(readxl)
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+afl <- read_excel("afl_with_injuries.xlsx")
+```
+
+```{r, eval=TRUE}
+afl$Home.Injuries.5 <- as.numeric(afl$Home.Injuries.5)
+afl$Home.Injuries.10 <- as.numeric(afl$Home.Injuries.10)
+afl$Home.Injuries.25 <- as.numeric(afl$Home.Injuries.25)
+afl$Home.Injuries.50 <- as.numeric(afl$Home.Injuries.50)
+afl$Home.Injuries.Total <- as.numeric(afl$Home.Injuries.Total)
+```
+
+```{r, eval=TRUE}
+fit <- lm(Attendance ~ Home.Venue.Average + Day + Away + Favorite.Odds + Home.Injuries.Total, data = afl)
+summary(fit)
+alias(fit)
+```

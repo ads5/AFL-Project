@@ -1,0 +1,70 @@
+---
+title: "Injuries x Ratings"
+output: pdf_document
+---
+
+```{r, eval=TRUE}
+library(rvest)
+library(stringr)
+library(readxl)
+
+# Get Injuries data
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+injuries <- read_excel("injuries_2012-2019.xlsx")
+
+# Remove playoffs
+injuries <- injuries[!is.na(injuries$Round),]
+
+# Split by first and last name
+injuries$player <- strsplit(injuries$Out, "\\s")
+injuries$firstname <- sapply(injuries$player, function(x) x[1])
+injuries$lastname <- sapply(injuries$player,function(x) x[2])
+
+# Make team names the same as in the ratings dataset
+injuries$team <- mapvalues(injuries$Team, from = c("Adelaide Crows", "Brisbane Lions", "Geelong Cats", "Gold Coast Suns", "Sydney Swans", "West Coast Eagles"), to = c("Adelaide", "Brisbane", "Geelong", "Gold Coast", "Sydney", "West Coast"))
+injuries$opposition <- mapvalues(injuries$Opposition, from = c("Adelaide Crows", "Brisbane Lions", "Geelong Cats", "Gold Coast Suns", "Sydney Swans", "West Coast Eagles"), to = c("Adelaide", "Brisbane", "Geelong", "Gold Coast", "Sydney", "West Coast"))
+
+# Make season lowercase
+colnames(injuries)[colnames(injuries)=="Season"] <- "season"
+
+# Remove unnecessary vars
+injuries$Out <- NULL
+injuries$player <- NULL
+injuries$...1 <- NULL
+injuries$Reason <- NULL
+injuries$Team <- NULL
+injuries$Opposition <- NULL
+
+# Get Ratings data
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+ratings <- read_excel("player_ratings.xlsx")
+
+# Split by first and last name
+  # First name is only a letter
+ratings$player <- strsplit(ratings$player, "\\.")
+ratings$firstname <- sapply(ratings$player, function(x) x[1])
+ratings$lastname <- sapply(ratings$player,function(x) x[2])
+
+# Fix spelling of Fremantle
+ratings$team <- mapvalues(ratings$team, from = c("Freemantle"), to = c("Fremantle"))
+
+# Remove unnecessary vars
+ratings$player <- NULL
+ratings$mt <- NULL
+ratings$rp <- NULL
+
+# Merge dataframes
+injuries_with_season_ratings <- merge(injuries, ratings, by = c("season", "team", "lastname"))
+
+# Remove rows improperly added due to same last name and team
+injuries_with_season_ratings <- injuries_with_season_ratings[startsWith(injuries_with_season_ratings$firstname.x, injuries_with_season_ratings$firstname.y),]
+
+# Reorder columns and remove unnecessary columns
+injuries_with_season_ratings <- injuries_with_season_ratings[,c(1,5,4,2,8,6,7,3,9)]
+
+# Sort data
+injuries_with_season_ratings <- injuries_with_season_ratings[order(injuries_with_season_ratings$season, injuries_with_season_ratings$team, injuries_with_season_ratings$Round),]
+
+# Write csv
+write.csv(injuries_with_season_ratings, "Injuries_with_Ratings.csv")
+```
