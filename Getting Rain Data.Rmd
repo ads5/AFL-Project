@@ -1,0 +1,85 @@
+---
+title: "Retrieving Weather Data"
+output: pdf_document
+---
+
+```{r, eval=TRUE}
+library(bomrang)
+library(tibble)
+library(readxl)
+library(dplyr)
+library(tidyr)
+```
+
+```{r, eval=TRUE}
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+station_ids <- read_excel("station_ids.xlsx")
+# Station IDs has the IDs used for collection of data
+# Adelaide: 23733; Bellerive: 94029; Blacktown: 67019; Carrara: 40764; Cazaly's: 31222; Docklands: 86338; Eureka: 89002; Football: 22046; Gabba: 40913; Kardinia: 87184; M.C.G.: 86338; Manuka: 70351; Marrara: 14015; Perth: 9225; Riverway Stadium: 32040; S.C.G.: 66062; Stadium: 66212; Subiaco: 9225; Sydney: 66212; Traeger: 14274; York: 91237; M.C.G.: 86232
+
+rain <- data.frame()
+for (i in 1:nrow(station_ids)){
+  rain.new <- get_historical(stationid = station_ids$stationid[i], type = 'rain') %>%
+    select(-(product_code), -(quality), -(period)) %>%
+    unite(event_date, year, month, day, sep = '-') %>%
+    as_tibble()
+  rain <- rbind(rain, rain.new)
+}
+rain <- rain[rain$event_date > 2009,]
+rain <- unique(rain)
+```
+
+```{r, eval=TRUE}
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+# Open AFL games data
+afl <- read_excel("afl_games.xlsx")
+
+afl$Venue <- as.factor(afl$Venue)
+levels(afl$Venue)
+afl$Venue <- as.character(afl$Venue)
+
+# Add Venue IDs to AFL data
+afl$VenueID <- NA
+
+for (i in 1:nrow(afl)){
+  for (j in 1:nrow(station_ids)){
+    if (isTRUE(afl$Venue[i] == "M.C.G.") && afl$Year[i] >= 2014 | isTRUE(afl$Venue[i] == "Docklands") & afl$Year[i] >= 2014){
+      afl$VenueID[i] <- "86338"
+    }
+    else if (isTRUE(afl$Venue[i] == "M.C.G.") && afl$Year[i] < 2014 | isTRUE(afl$Venue[i] == "Docklands") && afl$Year[i] < 2014){
+      afl$VenueID[i] <- "86232"
+    }
+    else if (isTRUE(afl$Venue[i] == station_ids$ground[j])){
+      afl$VenueID[i] <- station_ids$stationid[j]
+    }
+  }
+}
+
+colnames(rain) <- c("VenueID", "Date", "Rain")
+
+rain$Date <- as.Date(rain$Date)
+
+rain$rain.prior.day <- lag(rain$Rain, 1)
+rain$rain.2days.prior <- lag(rain$Rain, 2)
+rain$rain.3days.prior <- lag(rain$Rain, 3)
+rain$rain.past.three.days <- (rain$rain.prior.day + rain$rain.2days.prior + rain$rain.3days.prior)
+
+# Merge rain data
+afl.rain <- merge(afl, rain, by = c("VenueID", "Date"), all.x = TRUE)
+
+# Remove bad columns
+afl.rain$...1 <- NULL
+afl.rain$VenueID <- NULL
+```
+
+```{r, eval=TRUE}
+# Write file
+write.csv(afl.rain, "afl_team_data_from_2009.csv")
+```
+
+```{r, eval=TRUE}
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+afl <- read_excel("afl_team_data_from_2009.xlsx")
+afl <- afl[c(2,7,23,27)]
+write.csv(afl, "rain_data.csv")
+```

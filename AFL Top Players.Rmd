@@ -1,0 +1,151 @@
+---
+title: "AFL Top Players"
+output: pdf_document
+---
+
+```{r, eval=TRUE}
+library(rvest)
+
+players <- data.frame()
+
+# 2018
+webpage <- read_html('https://www.afl.com.au/news/features-and-podcasts/players-top-50')
+player_data <- html_nodes(webpage, '.nameheader') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:50){
+  player_i <- player_data[[i]]
+  player_i <- player_i[player_i != ""]
+  year = 2018
+  rank = 51-i
+  player_first = player_i[1]
+  player_last = player_i[2]
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+# 2017
+webpage <- read_html('https://www.afl.com.au/news/features-and-podcasts/players-top-50/2017-players-top-50#/')
+player_data <- html_nodes(webpage, '.nameheader') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:40){
+  player_i <- player_data[[i]]
+  player_i <- player_i[player_i != ""]
+  year = 2017
+  rank = 51-i
+  player_first = player_i[1]
+  player_last = player_i[2]
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+player_data <- html_nodes(webpage, '.playername') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:10){
+  for (j in 1:2){
+    player_first = player_data[[2*i-1]]
+    player_last = player_data[[2*i]]
+  }
+  rank = 11-i
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+# 2016
+webpage <- read_html('https://www.afl.com.au/news/features-and-podcasts/players-top-50/2016-players-top-50#/')
+player_data <- html_nodes(webpage, '.nameheader') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:40){
+  player_i <- player_data[[i]]
+  player_i <- player_i[player_i != ""]
+  year = 2016
+  rank = 51-i
+  player_first = player_i[1]
+  player_last = player_i[2]
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+player_data <- html_nodes(webpage, '.playername') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:10){
+  for (j in 1:2){
+    player_first = player_data[[2*i-1]]
+    player_last = player_data[[2*i]]
+  }
+  rank = 11-i
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+# 2015
+webpage <- read_html('http://www.aflplayers.com.au/article/who-will-top-the-players-50/')
+player_data <- html_nodes(webpage, '#arve-ty8qzElw3qI-3~ p strong') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- gsub("\\s*\\([^\\)]+\\)", "", player_data)
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:40){
+  year = 2015
+  rank = 10+i
+  player_first = player_data[[i]][3]
+  player_last = player_data[[i]][4]
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+player_data <- html_nodes(webpage, '#arve-YOzysyHGKvQ-3+ h2 , #arve-J0eFDn8pGZQ-3+ h2 , #arve-IFciyHziXI-3+ h2 , #arve-BydGfQsyUCI-3+ h2 , #arve-m5BiMZ9Jr7g-3+ h2 , #arve-U3WbTPZcQrQ-3+ h2 , #arve-r7-3v6simbM-3+ h2 , #arve-rLLZNYGDswA-3+ h2 , #arve-43frK8e3Lz0-3+ h2 , h2+ h2') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- gsub("\\s*\\([^\\)]+\\)", "", player_data)
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:10){
+  for (j in 1:2){
+    player_first = player_data[[i]][3]
+    player_last = player_data[[i]][4]
+  }
+  rank = i
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+# 2014
+webpage <- read_html('https://www.sporcle.com/games/grimlock81/mike-sheahans-top-50-afl-players-2010-2014')
+player_data <- html_nodes(webpage, '#giveUp a') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- gsub("\\s*\\([^\\)]+\\)", "", player_data)
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:40){
+  year = 2015
+  rank = 10+i
+  player_first = player_data[[i]][3]
+  player_last = player_data[[i]][4]
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+
+player_data <- html_nodes(webpage, '#arve-YOzysyHGKvQ-3+ h2 , #arve-J0eFDn8pGZQ-3+ h2 , #arve-IFciyHziXI-3+ h2 , #arve-BydGfQsyUCI-3+ h2 , #arve-m5BiMZ9Jr7g-3+ h2 , #arve-U3WbTPZcQrQ-3+ h2 , #arve-r7-3v6simbM-3+ h2 , #arve-rLLZNYGDswA-3+ h2 , #arve-43frK8e3Lz0-3+ h2 , h2+ h2') %>%
+  html_text()
+player_data <- matrix(unlist(player_data))
+player_data <- gsub("\\s*\\([^\\)]+\\)", "", player_data)
+player_data <- strsplit(player_data, "\\W")
+for (i in 1:10){
+  for (j in 1:2){
+    player_first = player_data[[i]][3]
+    player_last = player_data[[i]][4]
+  }
+  rank = i
+  newrow = data.frame(year, rank, player_first, player_last)
+  players <- rbind(players, newrow)
+}
+```
