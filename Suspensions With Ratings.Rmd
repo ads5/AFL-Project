@@ -1,0 +1,170 @@
+---
+title: "Merging Suspensions with AFL Data"
+output: pdf_document
+---
+
+---
+title: "Add Injuries to Datasets"
+output: pdf_document
+---
+
+```{r, eval=TRUE}
+library(plyr)
+library(readxl)
+# Open full ratings data
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+ratings <- read_excel("player_ratings.xlsx")
+
+# Show distribution of ratings data
+hist(ratings$ave_rating)
+quantiles <- as.matrix(quantile(ratings$ave_rating, probs = seq(0, 1, 0.05)))
+
+# Remove dataset
+rm(ratings)
+```
+
+```{r, eval=TRUE}
+# Open injuries with ratings dataset
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+injuries <- read_excel("injuries_with_ratings.xlsx")
+injuries$...1 <- NULL
+injuries$Avg.Rating <- as.numeric(injuries$Avg.Rating)
+
+# Create variables for players in top 5%, 10%, 25%, and 50% of all players (in that season)
+injuries$top5 <- as.numeric(injuries$Avg.Rating >= quantiles[20])
+injuries$top10 <- as.numeric(injuries$Avg.Rating >= quantiles[19])
+injuries$top25 <- as.numeric(injuries$Avg.Rating >= quantiles[16])
+injuries$top50 <- as.numeric(injuries$Avg.Rating >= quantiles[11])
+injuries$all <- as.numeric(injuries$Avg.Rating >= quantiles[1])
+
+# Remove quantiles
+rm(quantiles)
+```
+
+```{r, eval=TRUE}
+# Merge rows for same games
+for (i in 2:nrow(injuries)-1){
+  if (injuries$Round[i] == injuries$Round[i+1] && injuries$Team[i] == injuries$Team[i+1] && injuries$Season[i] == injuries$Season[i+1] & injuries$Reason[i] == "Suspension"){
+    injuries$top5[i+1] <- injuries$top5[i] + injuries$top5[i+1]
+    injuries$top10[i+1] <- injuries$top10[i] + injuries$top10[i+1]
+    injuries$top25[i+1] <- injuries$top25[i] + injuries$top25[i+1]
+    injuries$top50[i+1] <- injuries$top50[i] + injuries$top50[i+1]
+    injuries$all[i+1] <- injuries$all[i] + injuries$all[i+1]
+    injuries$Avg.Rating[i+1] <- injuries$Avg.Rating[i] + injuries$Avg.Rating[i+1]
+    injuries[i,] <- NA
+  }
+}
+
+# Get rid of the NA rows just created
+injuries <- na.omit(injuries)
+
+# Get rid of unnecessary variables
+injuries$First.Name <- NULL
+injuries$Last.Name <- NULL
+injuries$Reason <- NULL
+
+# Rename vars
+colnames(injuries) <- c("Season", "Round", "Date", "Team", "Opposition", "HA", "Avg.Rating", "top5", "top10", "top25", "top50", "all")
+
+write.csv(injuries, "injuries_only_susp_grouped.csv")
+```
+
+```{r, eval=TRUE}
+# Open Injury data
+setwd("/Users/austinsechrest/Documents/GitHub/LISH-AFL-Project/Datasets")
+injuries <- read.csv("injuries_only_susp_grouped.csv")
+
+# Open AFL games data
+afl <- read_excel("afl_team_data_from_2009.xlsx")
+
+# Note that injuries go back to 2012
+# Note that AFL data goes back to 2009
+
+# Remove unnecessary columns
+afl$...1 <- NULL
+injuries$...1 <- NULL
+afl$Time <- NULL
+
+# Check team names
+afl$Home <- as.factor(afl$Home)
+levels(afl$Home)
+injuries$Team <- as.factor(injuries$Team)
+levels(injuries$Team)
+
+# Map team name values for injuries
+injuries$Team <- mapvalues(injuries$Team, from = c("Brisbane", "GWS Giants"), to = c("Brisbane Lions", "Greater Western Sydney"))
+injuries$Opposition <- mapvalues(injuries$Opposition, from = c("Brisbane", "GWS Giants"), to = c("Brisbane Lions", "Greater Western Sydney"))
+```
+
+```{r, eval=TRUE}
+afl$Home.Injuries.top5 <- NA
+afl$Home.Injuries.top10 <- NA
+afl$Home.Injuries.top25 <- NA
+afl$Home.Injuries.top50 <- NA
+afl$Home.Injuries.Total <- NA
+afl$Home.Rating.Points.Missing <- NA
+afl$Away.Injuries.top5 <- NA
+afl$Away.Injuries.top10 <- NA
+afl$Away.Injuries.top25 <- NA
+afl$Away.Injuries.top50 <- NA
+afl$Away.Injuries.Total <- NA
+afl$Away.Rating.Points.Missing <- NA
+
+afl <- afl[afl$Year > 2011,]
+
+for (i in 1:nrow(injuries)){
+  for (j in 1:nrow(afl)){
+    if (afl$Round[j] == injuries$Round[i] & afl$Year[j] == injuries$Season[i] & afl$Home[j] == injuries$Team[i] & injuries$HA[i] == "Home"){
+      afl$Home.Injuries.top5[j] <- injuries$top5[i]
+      afl$Home.Injuries.top10[j] <- injuries$top10[i]
+      afl$Home.Injuries.top25[j] <- injuries$top25[i]
+      afl$Home.Injuries.top50[j] <- injuries$top50[i]
+      afl$Home.Injuries.Total[j] <- injuries$all[i]
+      afl$Home.Rating.Points.Missing[j] <- injuries$Avg.Rating[i]
+    }
+  }
+}
+for (i in 1:nrow(injuries)){
+  for (j in 1:nrow(afl)){
+    if (afl$Round[j] == injuries$Round[i] & afl$Year[j] == injuries$Season[i] & afl$Away[j] == injuries$Team[i] & injuries$HA[i] == "Away"){
+      afl$Away.Injuries.top5[j] <- injuries$top5[i]
+      afl$Away.Injuries.top10[j] <- injuries$top10[i]
+      afl$Away.Injuries.top25[j] <- injuries$top25[i]
+      afl$Away.Injuries.top50[j] <- injuries$top50[i]
+      afl$Away.Injuries.Total[j] <- injuries$all[i]
+      afl$Away.Rating.Points.Missing[j] <- injuries$Avg.Rating[i]
+    }
+  }
+}
+
+for (i in 1:nrow(afl)){
+    if (is.na(afl$Home.Injuries.Total[i]) & afl$Round[i] > 1){
+    afl$Home.Injuries.Total[i] <- 0
+    afl$Home.Injuries.top5[i] <- 0
+    afl$Home.Injuries.top10[i] <- 0
+    afl$Home.Injuries.top25[i] <- 0
+    afl$Home.Injuries.top50[i] <- 0
+    afl$Home.Rating.Points.Missing[i] <- 0
+  }
+}
+
+for (i in 1:nrow(afl)){
+    if (is.na(afl$Away.Injuries.Total[i]) & afl$Round[i] > 1){
+    afl$Away.Injuries.Total[i] <- 0
+    afl$Away.Injuries.top5[i] <- 0
+    afl$Away.Injuries.top10[i] <- 0
+    afl$Away.Injuries.top25[i] <- 0
+    afl$Away.Injuries.top50[i] <- 0
+    afl$Away.Rating.Points.Missing[i] <- 0
+  }
+}
+
+afl$Total.Injuries.top5 <- afl$Home.Injuries.top5 + afl$Away.Injuries.top5
+afl$Total.Injuries.top10 <- afl$Home.Injuries.top10 + afl$Away.Injuries.top10
+afl$Total.Injuries.top25 <- afl$Home.Injuries.top25 + afl$Away.Injuries.top25
+afl$Total.Injuries.top50 <- afl$Home.Injuries.top50 + afl$Away.Injuries.top50
+afl$Total.Injuries.Total <- afl$Home.Injuries.Total + afl$Away.Injuries.Total
+afl$Total.Rating.Points.Missing <- afl$Home.Rating.Points.Missing + afl$Away.Rating.Points.Missing
+
+write.csv(afl, "afl_with_susp.csv")
+```
